@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+
+   <f:view>
+      <h:head>
+
+         <!-- for OpenLayers integration -->
+         <link rel="stylesheet" href="https://openlayers.org/en/v4.2.0/css/ol.css" type="text/css" />
+         <link rel="stylesheet" href="css/ch01.css" />
+
+         <script src="https://openlayers.org/en/v4.2.0/build/ol.js" type="text/javascript" />
+
+         <!--  -->
+         <title>Satellite Services</title>
+      </h:head>
+      <h:body>
+         <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+
+         <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+            <p:graphicImage url="resources/images/statusbar.gif" />
+         </p:dialog>
+         <p:layout fullPage="true">
+            <p:layoutUnit binding="#{toolb}" position="north" size="50">
+               <div id="toolbar" class="toolbar">
+                  <p:commandButton value="Pan" title="Pan - Zoom Mode" widgetVar="panBtn" onclick="activatePan()" process="@this" />
+                  <p:commandButton id="cmdDrawBox" value="Draw Box" title="Draw Box" widgetVar="boxBtn" binding="#{cmdDrawBox}"
+                                   onclick="activateBox()"
+                                   process="@this" style="display: none;" />
+                  <p:commandButton id="cmdDrawPoly" value="Draw Polygon" title="Draw Polygon" widgetVar="polyBtn" binding="#{cmdDrawPoly}"
+                                   onclick="activatePolygon()"
+                                   process="@this" />
+               </div>
+            </p:layoutUnit>
+
+            <p:layoutUnit position="west" size="300">
+               <h:form>
+
+                  <p:panelGrid columns="2" >
+                     <p:selectOneRadio id="imgType" value="#{imageList.imgType}">
+                        <p:ajax event="valueChange" listener="#{imageList.changeParams}" update=":#{legendOut.clientId}"/>
+                        <f:selectItem itemLabel="RGB" itemValue="rgb" />
+                        <f:selectItem itemLabel="NDVI" itemValue="ndvi" />
+                     </p:selectOneRadio>
+                     <p:commandButton binding="#{cmdDownloadNDVI}" id="cmdDownloadNDVI"
+                                      value="NDVI"
+                                      action="#{imageList.downloadNDVIImage}"
+                                      icon="ui-icon-disk"
+                     />
+                  </p:panelGrid>
+
+                  <p:dataTable id="imageListDT"
+                               binding="#{imageListDT}"
+                               var="mSatRaster"
+                               value="#{imageList.satelliteRasterModel}"
+                               rowKey="#{mSatRaster.id_acquisizione}"
+                               selection="#{imageList.selectedSatelliteRaster}"
+                               paginator="true" rows="15" selectionMode="single"
+                  >
+
+                     <p:ajax event="rowSelect" listener="#{imageList.changeParams}"  update=":#{legendOut.clientId}" />
+                     <p:column headerText="Select reference image"  width="80%">
+                        <h:outputText value="#{mSatRaster.datstr}" />
+                     </p:column>
+
+                  </p:dataTable>
+
+
+
+
+                  <p:outputLabel id="concAzotLbl"  value="Concimazione azotata?"  />
+                  <p:selectOneRadio value="#{imageList.concAzot}" disabled="#{imageList.toolDisabled}">
+                     <p:ajax event="valueChange" listener="#{imageList.changeAzotParams}"
+                             update=":#{azotEttaroLbl.clientId}
+                                     :#{azotEttaroInput.clientId}
+                                     :#{resaPotenzialeLbl.clientId}
+                                     :#{cmdRunModuleD.clientId}
+                                     :#{cmdRunModuleConcAz.clientId}
+                                     :#{cmdDownloadConcAz.clientId}
+                                     :#{cmdDownloadPotYeld.clientId}
+                                     :#{legendOut.clientId}"/>
+                     <f:selectItem itemLabel="SI" itemValue="1" />
+                     <f:selectItem itemLabel="NO" itemValue="0" />
+                  </p:selectOneRadio>
+
+
+                  <p:outputLabel binding="#{azotEttaroLbl}" id="azotEttaroLbl" for="azotEttaroInput" value="Unità azoto/ettaro:" style="display: #{imageList.azotEttaroDisplay}" />
+                  <p:inputNumber binding="#{azotEttaroInput}" id="azotEttaroInput" style="display: #{imageList.azotEttaroDisplay}"
+                                 value="#{imageList.nitroEttaro}" minValue="0.0" maxValue="200.0" />
+                  <p:panelGrid columns="2" >
+                     <p:commandButton binding="#{cmdRunModuleConcAz}" id="cmdRunModuleConcAz" style="display: #{imageList.azotEttaroDisplay}"
+                                      value="Calcola"
+                                      action="#{imageList.calcNitroPotentialYeld}"
+                                      update=":#{legendOut.clientId}"
+                     />
+                     <p:commandButton binding="#{cmdDownloadConcAz}" id="cmdDownloadConcAz" style="display: #{imageList.azotEttaroDisplay}"
+
+                                      action="#{imageList.downloadNitroImage}"
+                                      icon="ui-icon-disk"
+                     />
+                  </p:panelGrid>
+
+
+
+
+
+
+
+                  <p:outputLabel binding="#{resaPotenzialeLbl}" id="resaPotenzialeLbl"  value="Calcolo la resa potenziale sul campo?" style="display: #{imageList.potenzialeDisplay}" />
+                  <p:panelGrid columns="2" >
+                     <p:commandButton binding="#{cmdRunModuleD}" id="cmdRunModuleD" style="display: #{imageList.potenzialeDisplay}"
+                                      value="Calcola"
+                                      action="#{imageList.calcPotentialYeld}"
+                                      update=":#{legendOut.clientId}"/>
+
+                     <p:commandButton binding="#{cmdDownloadPotYeld}" id="cmdDownloadPotYeld" style="display: #{imageList.potenzialeDisplay}"
+
+                                      action="#{imageList.downloadPotYeldImage}"
+                                      icon="ui-icon-disk"
+                     />
+                  </p:panelGrid>
+
+
+               </h:form>
+            </p:layoutUnit>
+
+            <p:layoutUnit position="center">
+               <!-- map element for OpenLayers -->
+               <div id="map" class="map" />
+               <p:graphicImage url="#{imageList.legendOut}" id="legendOut" binding="#{legendOut}" width="80%"/>
+            </p:layoutUnit>
+
+            <p:layoutUnit position="south">
+                  <p:graphicImage url="resources/images/logo_ibimet.png" width="234" height="84" />
+            </p:layoutUnit>
+         </p:layout>
+
+      </h:body>
+
+   </f:view>
+</html>

@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../SatServWS/out/artifacts/SatServWS_war_exploded/WEB-INF/lib/jsr311-api-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../SatServWS/out/artifacts/SatServWS_war_exploded/WEB-INF/lib/json-simple-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../SatServWS/out/artifacts/SatServWS_war_exploded/WEB-INF/lib/jersey-bundle-1.19.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../SatServWS/out/artifacts/SatServWS_war_exploded/WEB-INF/lib/utils-1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../SatServWS/out/artifacts/SatServWS_war_exploded/WEB-INF/lib/org.json.simple-0.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../SatServWS/out/artifacts/SatServWS_war_exploded/WEB-INF/lib/postgresql-42.0.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

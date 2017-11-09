@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="cocoon:cocoon-itext:2.1.7" type="repository">
+    <properties maven-id="cocoon:cocoon-itext:2.1.7" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/cocoon/cocoon-itext/2.1.7/cocoon-itext-2.1.7.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
