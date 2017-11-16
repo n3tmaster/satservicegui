@@ -7,11 +7,12 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="description" content="Migliora le tue coltivazioni attraverso una concimazione precisa e puntuale">
 
+  <link rel="stylesheet" href="css/normalize.css" />
   <link rel="stylesheet" href="css/ol.css" />
   <link rel="stylesheet" href="css/main.css" />
-  <link rel="stylesheet" href="css/calendar.css" />
+  <!-- <link rel="stylesheet" href="css/calendar.css" /> -->
+  <link rel="stylesheet" href="css/toggles.css" />
 
-  <script src="js/ol.js" type="text/javascript"></script>
 </head>
 
 <body lang="it">
@@ -41,41 +42,43 @@
     </div>
   </nav>
 
-  <aside>
+  <aside id="aside">
     <form>
-      <div class="radio">
-        <input id="rgb" name="imgtype" type="radio" checked>
+      <div id="img-format" class="radio">
+        <input id="rgb" name="format" value="rgb" type="radio" v-model="format">
         <label for="rgb" class="radio-label">RGB</label>
-      </div>
-      <div class="radio">
-        <input id="ndvi" name="imgtype" type="radio">
+        <input id="ndvi" name="format" value="ndvi" type="radio" v-model="format">
         <label for="ndvi" class="radio-label">NDVI</label>
       </div>
 
       <div id="image-list">
-        <h4>Date</h4>
-      </div>
-
-      <h4 id="concimaz-nitro">Concime?</h4>
-
-      <div class="radio">
-        <input id="nitro_on" name="nitro" type="radio" checked>
-        <label for="nitro_on" class="radio-label">SI</label>
-      </div>
-      <div class="radio">
-        <input id="nitro_off" name="nitro" type="radio">
-        <label for="nitro_off" class="radio-label">NO</label>
+        <!-- <h4>Date</h4> -->
       </div>
 
       <!-- nitro ettaro -->
-      <div id="nitro">
-        <h4>u/ha</h4>
-        <p>
-          <!--style="display: #{imageList.azotEttaroDisplay}" -->
-          <input type="number" placeholder="0" id="azotEttaroInput" step="1" min="0" max="200">
-          <br/>
-          <small>u. Azoto<br/>0 &rarr; 200</small>
-        </p>
+      <div id="nitro-wrap">
+
+        <!-- <div class="radio">
+          <input id="nitro_on" name="nitro" type="radio" checked>
+          <label for="nitro_on" class="radio-label">SI</label>
+          <input id="nitro_off" name="nitro" type="radio">
+          <label for="nitro_off" class="radio-label">NO</label>
+        </div> -->
+
+        <input type="checkbox" id="nitro-switch" v-model="nitro">
+        <label for="nitro-switch">Concime</label>
+
+        <transition name="fade">
+        <div v-show="nitro" id="nitro-units">
+          <h4>u/ha</h4>
+          <p>
+            <!--style="display: #{imageList.azotEttaroDisplay}" -->
+            <input type="number" placeholder="0" id="azotEttaroInput" step="1" min="0" max="200">
+            <br/>
+            <small>u. Azoto<br/>0 &rarr; 200</small>
+          </p>
+        </div>
+      </transition>
       </div>
     </form>
   </aside>
@@ -101,7 +104,20 @@
       <p>&copy; 2017 Ibimet - Consiglio Nazionale delle Ricerche</p>
     </footer>
 
+    <script src="https://unpkg.com/vue"></script>
+    <script src="js/ol.js" type="text/javascript"></script>
     <script src="js/basefuncs.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+      new Vue({
+        el: '#aside',
+        data: {
+          state: AgroSat.state,
+          // formatPicked: 'aaa',
+          format: 'rgb',
+          nitro: false
+        }
+      })
+    </script>
   </body>
 </html>
 

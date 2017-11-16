@@ -1,7 +1,11 @@
 Richiesta img per data (Istr. leandro 26/10/2017)
 ---
 
-La funzione la chiami con una get : http://149.139.16.54:8080/ssws/api/download/j_find_raster_elements? i parametri sono:
+La funzione la chiami con una get diretta a:
+
+    http://149.139.16.54:8080/ssws/api/download/j_find_raster_elements?
+
+I parametri per la query string sono:
 
 - srid (metti sempre 3857)
 - srid_to (metti sempre 4326)

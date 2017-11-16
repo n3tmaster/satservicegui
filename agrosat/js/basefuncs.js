@@ -8,7 +8,7 @@ var AgroSat = (function () {
     extractedImage: null,
     interaction: new ol.interaction.DragPan(),
     polygonText: "",
-    imgtype: 'rgb',
+    imgType: 'rgb',
     year: 2017,
     month: 10,
     day: 6,
@@ -101,7 +101,7 @@ var AgroSat = (function () {
         source:  new ol.source.ImageStatic({
           title: 'extracted raster',
           attributions: 'extracted raster',
-          url: _x.downloadUrl+'/j_extract_'+_x.imgtype+'?'+_enc(Object.assign(_x.baseParams, _x.when, {streamed: 1, polygon: _x.polygonText})),
+          url: _x.downloadUrl+'/j_extract_'+_x.imgType+'?'+_enc(Object.assign(_x.baseParams, _x.when, {streamed: 1, polygon: _x.polygonText})),
           imageExtent: _x.boxExtent
         })
       });
@@ -143,6 +143,8 @@ var AgroSat = (function () {
     _x.map.setView(new ol.View({ center: ol.proj.transform(initMapCenter,'EPSG:4326', 'EPSG:3857'), zoom: 15 }));
   };
 
+  init()
+
   return {
     state: _x,
     downloadNDVI: downloadNDVI,
@@ -150,7 +152,6 @@ var AgroSat = (function () {
     downloadNitroYeld: downloadNitroYeld,
     activatePan: activatePan,
     activateDrawPolygon: activateDrawPolygon,
-    init: init,
   };
 
 })();
