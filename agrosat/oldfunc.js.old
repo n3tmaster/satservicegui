@@ -1,0 +1,108 @@
+
+  imgAndDateParams: function (_img,_year,_month,_day) {
+    // Set parameters for client side GIS functions
+    s.imgtype = _img;
+    s.year = _year;
+    s.month = _month;
+    s.day = _day;
+    console.log(s)
+  },
+
+  calculateNitroPotentialYield: function (nitroIn) {
+    // ask REST api to calculate NITRO potential yield
+    if(s.imgLoaded) {
+      s.map.removeLayer(s.extractedImage);
+      s.extractedImage = new ol.layer.Image({
+        source: new ol.source.ImageStatic({
+          title: 'extracted raster',
+          attributions: 'extracted raster',
+          url: s.baseUrl+'/j_calc_nitro_yeld?nitro='+nitroIn +'&year='+s.year+'&month='+s.month+'&day='+s.day+'&table_name=ndvi&srid=3857&srid_to=4326&streamed=1&polygon='+s.polygonText,
+          imageExtent: s.boxExtent
+        })
+      });
+      s.map.addLayer(s.extractedImage);
+    }
+  },
+
+  calculatePotentialYeld: function() {
+    // ask REST api to calculate Potential Yield
+    if(s.imgLoaded) {
+      s.map.removeLayer(s.extractedImage);
+      s.extractedImage = new ol.layer.Image({
+        source: new ol.source.ImageStatic({
+          title: 'extracted raster',
+          attributions: 'extracted raster',
+          url: s.baseUrl+'/j_calc_potential_yeld?year='+s.year+'&month='+s.month+'&day='+s.day+'&table_name=ndvi&srid=3857&srid_to=4326&streamed=1&polygon='+ s.polygonText,
+          imageExtent: s.boxExtent
+        })
+      });
+      s.map.addLayer(s.extractedImage);
+    }
+  },
+
+
+  mapAutoCenterMap: function (long, lat) {
+    s.map.getView().setCenter(ol.proj.transform([long, lat], 'EPSG:4326', 'EPSG:3857'));
+    s.map.getView().setZoom(15);
+  },
+  changeImage: function() {
+    // replace loaded image by selecting new ref. date or type
+    if(s.imgLoaded) {
+      s.map.removeLayer(s.extractedImage);
+      s.extractedImage = new ol.layer.Image({
+        source: new ol.source.ImageStatic({
+          title: 'extracted raster',
+          attributions: 'extracted raster',
+          url: s.baseUrl+'/j_extract_'+s.imgtype+'?year='+s.year+'&month='+s.month+'&day='+s.day+'&table_name=ndvi&srid=3857&srid_to=4326&streamed=1&polygon='+s.polygonText,
+          imageExtent: s.boxExtent
+        })
+      });
+      s.map.addLayer(s.extractedImage);
+    }
+  },
+
+  activateDrawPolygon: function (){
+    s.map.removeInteraction(s.interaction);
+    s.interaction = new ol.interaction.Draw({
+      type: /** @type {ol.geom.GeometryType} */ ('Polygon')
+    });
+    // on dragbox start, clean previous vector feature and raster (extr. image)
+    s.interaction.on('drawstart',function(evt){
+      s.source4Interaction.clear();
+      s.map.removeLayer(s.extractedImage);
+    });
+    s.interaction.on('drawend',function(evt){
+      var feat = evt.feature;
+      var geom = feat.getGeometry();
+      var coords = " " +  geom.getCoordinates()[0];
+      var coordsArr = coords.replace("["," ");
+      coordsArr = coordsArr.replace("]"," ");
+      coordsArr = coordsArr.split(",");
+
+      var featIn = new ol.Feature({ geometry: geom });
+
+      s.source4Interaction.addFeature(featIn);
+
+      //build Well Known Text (WKT) Polygon
+      s.polygonText = "POLYGON((";
+      s.boxExtent = geom.getExtent();
+
+      for (var i =  0; i < coordsArr.length; i=i+2){
+        s.polygonText += coordsArr[i] + " " + coordsArr[i+1] + ",";
+      }
+      s.polygonText += coordsArr[0] + " " + coordsArr[1] + "))";
+
+      s.extractedImage = new ol.layer.Image({
+        source:  new ol.source.ImageStatic({
+          title: 'extracted raster',
+          attributions: 'extracted raster',
+          url: baseUrl+'/j_extract_'+imgtype+'?year='+year+'&month='+month+'&day='+day+'&table_name=ndvi&srid=3857&srid_to=4326&streamed=1&polygon='+polygonText,
+          imageExtent: boxExtent
+        })
+      });
+      s.map.addLayer(s.extractedImage);
+      s.imgLoaded = true;
+    });
+    s.map.addInteraction(s.interaction);
+  },
+};

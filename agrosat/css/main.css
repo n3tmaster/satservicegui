@@ -1,0 +1,83 @@
+html {height:100%;}
+body {
+  margin:0;
+  padding:0;
+  font: 75% "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
+  min-height:100%;
+  display:grid;
+  grid-template-columns: 120px auto;
+  grid-template-rows: 60px auto 30px 60px;
+  grid-template-areas: "header nav" "aside main" "aside legend" "footer footer";
+  color:#fff;
+}
+header {
+  grid-area: header;
+  background:#29323f;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+nav {
+  grid-area: nav;
+  background:#29323f;
+  display:flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 20px;
+}
+nav a {
+  display:inline-block;
+  width:30px;
+}
+aside {
+  grid-area: aside;
+  background:#29323f;
+  display:flex;
+  justify-content:space-around;
+}
+aside h4 {margin-bottom:0;}
+main {
+  grid-area: main;
+  background:#ccc;
+}
+
+section#legend {
+  grid-area: legend;
+  background:transparent;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+footer {
+  grid-area: footer;
+  background: #29323f;
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+/* controls */
+a:link, a:visited { color:#fff; text-decoration:none;}
+a:hover, a:active { color:#fcee6d;}
+#nitro {}
+#nitro input {
+  width: 80px;
+  height: 36px;
+  background: #29323f;
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: bold;
+  color: #fff;
+  outline: none;
+  border: none;
+}
+#nitro p { margin-top:0; }
+#map {
+  width:100%;
+  height:100%;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
