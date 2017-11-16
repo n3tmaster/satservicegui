@@ -44,28 +44,29 @@
 
   <aside id="aside">
     <form>
-      <div id="img-format" class="radio">
-        <input id="rgb" name="format" value="rgb" type="radio" v-model="format">
-        <label for="rgb" class="radio-label">RGB</label>
-        <input id="ndvi" name="format" value="ndvi" type="radio" v-model="format">
-        <label for="ndvi" class="radio-label">NDVI</label>
+      <div id="img-format-wrap" class="sub-panel">
+        <div class="pretty p-default">
+          <input type="radio" name="format" value="rgb" v-model="format" />
+          <div class="state p-success">
+            <label>RGB</label>
+          </div>
+        </div>
+
+        <div class="pretty p-default">
+          <input type="radio" name="format" value="ndvi" v-model="format" />
+          <div class="state p-success">
+            <label>NDVI</label>
+          </div>
+        </div>
       </div>
 
-      <div id="image-list">
-        <!-- <h4>Date</h4> -->
-      </div>
+
+      <!-- <div id="image-list" class="sub-panel">
+        <h4>Date</h4>
+      </div> -->
 
       <!-- nitro ettaro -->
-      <div id="nitro-wrap">
-
-        <!-- <div class="radio">
-          <input id="nitro_on" name="nitro" type="radio" checked>
-          <label for="nitro_on" class="radio-label">SI</label>
-          <input id="nitro_off" name="nitro" type="radio">
-          <label for="nitro_off" class="radio-label">NO</label>
-        </div> -->
-
-
+      <div id="nitro-wrap" class="sub-panel">
         <div class="pretty p-default">
           <input type="checkbox" id="nitro-switch" v-model="nitro" />
           <div class="state p-success">

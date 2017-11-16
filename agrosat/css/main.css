@@ -32,10 +32,16 @@ nav a {
 aside {
   grid-area: aside;
   background:#29323f;
-  display:flex;
-  justify-content:space-around;
 }
-aside form {width:80px;}
+
+aside form {
+  width:120px;
+  display: flex;
+  flex-direction: column;
+}
+aside form .sub-panel {
+  margin:10px 0;
+}
 aside h4 {margin-bottom:0;}
 main {
   grid-area: main;
