@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="css/ol.css" />
   <link rel="stylesheet" href="css/main.css" />
   <!-- <link rel="stylesheet" href="css/calendar.css" /> -->
-  <link rel="stylesheet" href="css/toggles.css" />
+  <link rel="stylesheet" href="css/pretty-checkbox.min.css" />
 
 </head>
 
@@ -65,20 +65,24 @@
           <label for="nitro_off" class="radio-label">NO</label>
         </div> -->
 
-        <input type="checkbox" id="nitro-switch" v-model="nitro">
-        <label for="nitro-switch">Concime</label>
 
-        <transition name="fade">
-        <div v-show="nitro" id="nitro-units">
-          <h4>u/ha</h4>
-          <p>
-            <!--style="display: #{imageList.azotEttaroDisplay}" -->
-            <input type="number" placeholder="0" id="azotEttaroInput" step="1" min="0" max="200">
-            <br/>
-            <small>u. Azoto<br/>0 &rarr; 200</small>
-          </p>
+        <div class="pretty p-default">
+          <input type="checkbox" id="nitro-switch" v-model="nitro" />
+          <div class="state p-success">
+            <label>Concime</label>
+          </div>
         </div>
-      </transition>
+        <transition name="fade">
+          <div v-show="nitro" id="nitro-units">
+            <h4>u/ha</h4>
+            <p>
+              <!--style="display: #{imageList.azotEttaroDisplay}" -->
+              <input type="number" placeholder="0" id="azotEttaroInput" step="1" min="0" max="200">
+              <br/>
+              <small>u. Azoto<br/>0 &rarr; 200</small>
+            </p>
+          </div>
+        </transition>
       </div>
     </form>
   </aside>
