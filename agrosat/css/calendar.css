@@ -17,7 +17,8 @@ section.calendar h1 {
   color: #fcee6d;
   margin: 0 0 30px 0;
 }
-section.calendar form {
+
+/*section.calendar form {
   position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -133,3 +134,4 @@ section.calendar form label.day.invalid span, section.calendar form label.day.in
 }
 section.calendar div.clearfix{clear:both;}
 section.calendar div.hidden{display:none;}
+*/

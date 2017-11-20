@@ -94,3 +94,17 @@ a:hover, a:active { color:#fcee6d;}
   cursor: -moz-grab;
   cursor: -webkit-grab;
 }
+
+#dates .rd-container {
+  background:#29323f;
+  font-size:10px;
+  padding:0;
+  border:0;
+}
+#dates .rd-container .rd-day-selected {
+  background:#fcee6d;
+  color:#29323f;
+}
+#dates .rd-back, #dates .rd-next {
+  color:#fcee6d;
+}

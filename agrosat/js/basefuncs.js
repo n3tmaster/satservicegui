@@ -40,32 +40,32 @@ var AgroSat = (function () {
     navigator.geolocation ? navigator.geolocation.getCurrentPosition(_geoON, _geoFAIL) : console.log(errMsg);
   };
 
-  var when = function () {
+  var _when = function () {
     return {year: _x.year, month: _x.month, day: _x.day}
   };
 
-  var downloadNDVI = function (){
-    qData = Object.assign(_x.baseParams, _x.when, {polygon: _x.polygonText});
+  var _downloadNDVI = function (){
+    var qData = Object.assign(_x.baseParams, _when(), {polygon: _x.polygonText});
     window.open(_x.downloadUrl+"/j_download_ndvi?"+_enc(qData), "_blank");
   };
 
-  var downloadPotYeld = function (){
-    qData = Object.assign(_x.baseParams, _x.when, {polygon: _x.polygonText});
+  var _downloadPotYeld = function (){
+    var qData = Object.assign(_x.baseParams, _when(), {polygon: _x.polygonText});
     window.open(_x.downloadUrl+"/j_download_potential_yeld?"+_enc(qData), "_blank");
   };
 
-  var downloadNitroYeld = function (nitroIn){
-    qData = Object.assign(_x.baseParams, _x.when, {nitro: nitroIn, polygon: _x.polygonText});
+  var _downloadNitroYeld = function (nitroIn){
+    var qData = Object.assign(_x.baseParams, _when(), {nitro: nitroIn, polygon: _x.polygonText});
     window.open(_x.downloadUrl+"/j_download_nitro_yeld?"+_enc(qData), "_blank");
   };
 
-  var activatePan = function () {
+  var _activatePan = function () {
     _x.map.removeInteraction(_x.interaction);
     _x.interaction = new ol.interaction.DragPan();
     _x.map.addInteraction(_x.interaction);
   };
 
-  var activateDrawPolygon = function (){
+  var _activateDrawPolygon = function (){
     _x.map.removeInteraction(_x.interaction);
     _x.interaction = new ol.interaction.Draw({
       type: /** @type {ol.geom.GeometryType} */ ('Polygon')
@@ -97,11 +97,13 @@ var AgroSat = (function () {
       }
       _x.polygonText += coordsArr[0] + " " + coordsArr[1] + "))";
 
+      var qData = Object.assign(_when(), baseParams, {streamed: 1, polygon: _x.polygonText})
+
       _x.extractedImage = new ol.layer.Image({
         source:  new ol.source.ImageStatic({
           title: 'extracted raster',
           attributions: 'extracted raster',
-          url: _x.downloadUrl+'/j_extract_'+_x.imgType+'?'+_enc(Object.assign(_x.baseParams, _x.when, {streamed: 1, polygon: _x.polygonText})),
+          url: _x.downloadUrl+'/j_extract_'+_x.imgType+'?'+_enc(Object.assign(_x.baseParams, _when(), {streamed: 1, polygon: _x.polygonText})),
           imageExtent: _x.boxExtent
         })
       });
@@ -111,7 +113,37 @@ var AgroSat = (function () {
     _x.map.addInteraction(_x.interaction);
   }
 
-  var init = function () {
+  var _fetchDatesWithRasters = function () {
+    if (_x.polygonText.length > 0) {
+      var qData = {srid: 3857, srid_to: 4326, polygon: _x.polygonText};
+      window.open(_x.downloadUrl+"/j_find_raster_elements?"+_enc(qData), "_blank");
+    } else {
+      console.log('[ERROR] no given polygon')
+    }
+  }
+
+  var _changeImageType = function (){
+    //  'http://149.139.16.54:8080/ssws/api/download/j_extract_' + imgtype + '?year=' + ... + '&table_name=ndvi&srid=3857&srid_to=4326&streamed=1&polygon=' + polygonText
+    if(_x.imgLoaded) {
+      _x.map.removeLayer(_x.extractedImage);
+      var qData = Object.assign(_when(), baseParams, {streamed: 1, polygon: _x.polygonText})
+      _x.extractedImage = new ol.layer.Image({
+        source: new ol.source.ImageStatic({
+          title: 'extracted raster',
+          attributions: 'extracted raster',
+          url: (_x.downloadUrl+'/j_extract_'+_x.imgType+'?'+ _enc(qData)),
+          imageExtent: boxExtent
+        })
+      });
+
+      map.addLayer(extractedImage);
+    } else {
+      console.log('[ERROR] imgLoaded is false or undefined')
+    }
+  }
+
+  var _init = function () {
+    // Map
     _x.source4Interaction = new ol.source.Vector();
     _x.map = new ol.Map({
       target: 'map',
@@ -141,16 +173,29 @@ var AgroSat = (function () {
     // -> add as interaction on click _geoLocate()
     var initMapCenter = [15.356694, 41.493683];
     _x.map.setView(new ol.View({ center: ol.proj.transform(initMapCenter,'EPSG:4326', 'EPSG:3857'), zoom: 15 }));
+
+    // Date Picker
+    rome(document.getElementById('dates'), {time: false}).on('data', function (pickedDateStr) {
+      var dSplit = pickedDateStr.split('-');
+      _x.year = +dSplit[0];
+      _x.month = +dSplit[1];
+      _x.day = +dSplit[2];
+      // document.getElementById('picked-date').innerText = value;
+      console.log(_when())
+    });
   };
 
   return {
-    init: init,
+    init: _init,
     state: _x,
-    downloadNDVI: downloadNDVI,
-    downloadPotYeld: downloadPotYeld,
-    downloadNitroYeld: downloadNitroYeld,
-    activatePan: activatePan,
-    activateDrawPolygon: activateDrawPolygon,
+    when: _when,
+    downloadNDVI: _downloadNDVI,
+    downloadPotYeld: _downloadPotYeld,
+    downloadNitroYeld: _downloadNitroYeld,
+    activatePan: _activatePan,
+    activateDrawPolygon: _activateDrawPolygon,
+    fetchDatesWithRasters: _fetchDatesWithRasters,
+    changeImageType: _changeImageType
   };
 
 })();
