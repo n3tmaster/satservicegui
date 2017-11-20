@@ -3,13 +3,21 @@ body {
   margin:0;
   padding:0;
   font: 75% "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
-  min-height:100%;
+  height:100%;
+}
+[v-cloak] {
+  display: none;
+}
+
+#agrosat {
   display:grid;
-  grid-template-columns: 120px auto;
+  grid-template-columns: 160px auto;
   grid-template-rows: 60px auto 30px 60px;
   grid-template-areas: "header nav" "aside main" "aside legend" "footer footer";
   color:#fff;
+  height:100%;
 }
+
 header {
   grid-area: header;
   background:#29323f;
@@ -32,17 +40,11 @@ nav a {
 aside {
   grid-area: aside;
   background:#29323f;
+  padding:20px;
 }
 
-aside form {
-  width:120px;
-  display: flex;
-  flex-direction: column;
-}
-aside form .sub-panel {
-  margin:10px 0;
-}
-aside h4 {margin-bottom:0;}
+aside .sub-panel { margin:20px 0; }
+
 main {
   grid-area: main;
   background:#ccc;
@@ -71,7 +73,6 @@ a:hover, a:active { color:#fcee6d;}
 
 #nitro-units { text-align:center; }
 #nitro-units input {
-  width: 65px;
   height: 30px;
   background: #29323f;
   font-size: 24px;
@@ -82,8 +83,7 @@ a:hover, a:active { color:#fcee6d;}
   border: none;
   text-align:center;
 }
-#nitro-units p {margin:0;}
-#nitro-units h4 {margin-top:0;}
+
 .fade-enter-active, .fade-leave-active { transition: opacity .5s }
 .fade-enter, .fade-leave-to { opacity: 0 }
 

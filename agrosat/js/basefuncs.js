@@ -143,9 +143,8 @@ var AgroSat = (function () {
     _x.map.setView(new ol.View({ center: ol.proj.transform(initMapCenter,'EPSG:4326', 'EPSG:3857'), zoom: 15 }));
   };
 
-  init()
-
   return {
+    init: init,
     state: _x,
     downloadNDVI: downloadNDVI,
     downloadPotYeld: downloadPotYeld,
