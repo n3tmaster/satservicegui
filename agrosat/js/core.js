@@ -79,25 +79,12 @@ var AgroSat = (function () {
     _x.interaction.on('drawend',function(evt){
       var feat = evt.feature;
       var geom = feat.getGeometry();
-      var coords = " " +  geom.getCoordinates()[0];
-      var coordsArr = coords.replace("["," ");
-      coordsArr = coordsArr.replace("]"," ");
-      coordsArr = coordsArr.split(",");
-
       var featIn = new ol.Feature({ geometry: geom });
-
       _x.source4Interaction.addFeature(featIn);
 
-      //build Well Known Text (WKT) Polygon
-      _x.polygonText = "POLYGON((";
-      _x.boxExtent = geom.getExtent();
+      _buildWKTPolygon(geom)
 
-      for (var i =  0; i < coordsArr.length; i=i+2){
-        _x.polygonText += coordsArr[i] + " " + coordsArr[i+1] + ",";
-      }
-      _x.polygonText += coordsArr[0] + " " + coordsArr[1] + "))";
-
-      var qData = Object.assign(_when(), baseParams, {streamed: 1, polygon: _x.polygonText})
+      var qData = Object.assign(_when(), _x.baseParams, {streamed: 1, polygon: _x.polygonText})
 
       _x.extractedImage = new ol.layer.Image({
         source:  new ol.source.ImageStatic({
@@ -109,8 +96,27 @@ var AgroSat = (function () {
       });
       _x.map.addLayer(_x.extractedImage);
       _x.imgLoaded = true;
+
+      // remove azure dot on drawend
+      _activatePan()
     });
     _x.map.addInteraction(_x.interaction);
+  }
+
+  var _buildWKTPolygon = function(geom) {
+    var coords = " " +  geom.getCoordinates()[0];
+    var coordsArr = coords.replace("["," ");
+    coordsArr = coordsArr.replace("]"," ");
+    coordsArr = coordsArr.split(",");
+
+    //build Well Known Text (WKT) Polygon
+    _x.polygonText = "POLYGON((";
+    _x.boxExtent = geom.getExtent();
+
+    for (var i =  0; i < coordsArr.length; i=i+2) {
+      _x.polygonText += coordsArr[i] + " " + coordsArr[i+1] + ",";
+    }
+    _x.polygonText += coordsArr[0] + " " + coordsArr[1] + "))";
   }
 
   var _fetchDatesWithRasters = function () {
@@ -126,13 +132,13 @@ var AgroSat = (function () {
     //  'http://149.139.16.54:8080/ssws/api/download/j_extract_' + imgtype + '?year=' + ... + '&table_name=ndvi&srid=3857&srid_to=4326&streamed=1&polygon=' + polygonText
     if(_x.imgLoaded) {
       _x.map.removeLayer(_x.extractedImage);
-      var qData = Object.assign(_when(), baseParams, {streamed: 1, polygon: _x.polygonText})
+      var qData = Object.assign(_when(), _x.baseParams, {streamed: 1, polygon: _x.polygonText})
       _x.extractedImage = new ol.layer.Image({
         source: new ol.source.ImageStatic({
           title: 'extracted raster',
           attributions: 'extracted raster',
           url: (_x.downloadUrl+'/j_extract_'+_x.imgType+'?'+ _enc(qData)),
-          imageExtent: boxExtent
+          imageExtent: _x.boxExtent
         })
       });
 
