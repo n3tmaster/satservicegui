@@ -29,9 +29,9 @@ nav {
   grid-area: nav;
   background:#29323f;
   display:flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  padding-right: 20px;
+  padding:0 5px;
 }
 nav a {
   display:inline-block;
@@ -42,7 +42,6 @@ aside {
   background:#29323f;
   padding:15px;
 }
-
 aside .sub-panel { margin:20px 0; }
 
 main {
@@ -107,4 +106,15 @@ a:hover, a:active { color:#fcee6d;}
 }
 #dates .rd-back, #dates .rd-next {
   color:#fcee6d;
+}
+
+.download-btn {
+  text-align: center;
+  width: 24px;
+  line-height: 75%;
+}
+
+.instructions {
+  text-align:justify;
+  font-variant: all-caps;
 }
