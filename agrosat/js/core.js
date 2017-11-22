@@ -1,40 +1,16 @@
-var Ags = Object.freeze({
-  name: 'AgroSat App',
-  description: '0.0.1',
-  downloadUrl: "http://149.139.16.54:8080/ssws/api/download",
-  baseParams: {table_name: 'ndvi', srid: 3857, srid_to: 4326, streamed: 0},
-  helpers: {
-    enc: function (data) {
-      var paramsAry = [];
-      Object.keys(data).forEach( function (k, idx, ary) {
-        paramsAry.push(encodeURIComponent(k) + '=' + encodeURIComponent(data[k]));
-      });
-      return paramsAry.join('&');
-    },
-    downloadNDVI: function (when, polytxt) {
-      var q = Object.assign(baseParams, when, {polygon: polytxt});
-      window.open(downloadUrl+"/j_download_ndvi?"+helpers.enc(q), "_blank");
-    },
-    downloadPotYeld: function (when, polytxt) {
-      var q = Object.assign(Ags.baseParams, when, {polygon: polytxt});
-      window.open(downloadUrl+"/j_download_potential_yeld?"+helpers.enc(q), "_blank");
-    },
-    downloadNitroYeld: function (when, polytxt, nitroIn) {
-      var q = Object.assign(Ags.baseParams, when, {polygon: polytxt, nitro: nitroIn});
-      window.open(downloadUrl+"/j_download_nitro_yeld?"+helpers.enc(q), "_blank");
-    },
-  // more helper pure functional methods here...
-  },
-});
-
 Vue.prototype.$http = axios  // per usare this.$http.get in Vue
 var vm = new Vue({
   el: '#agrosat',
   data: {
+    name: 'AgroSat App',
+    description: '0.0.1',
+    origin: "http://149.139.16.54:8080/ssws/api/download",
+    baseParams: {table_name: 'ndvi', srid: 3857, srid_to: 4326, streamed: 0},
     format: 'rgb',
     nitro: false,
+    unha: 0,
     when: "2017-10-15",
-    polygon: " ",
+    polygon: "",
     boxExtent: null,
     currentInteraction: null,
     extractedImage: null,
@@ -50,55 +26,73 @@ var vm = new Vue({
       return { year: +dSplit[0], month: +dSplit[1], day: +dSplit[2] }
     },
     wktPolygon: function(geom) {
-      var c = " "+geom.getCoordinates()[0];
-      c = c.replace(/\[|\]/g," ").split(",");
+      var c = String(geom.getCoordinates()[0]).replace(/\[|\]/g," ").split(",");
       var poly = ""
       for (var i = 0; i < c.length; i=i+2){ poly += c[i]+" "+c[i+1]+","; }
-      poly += c[0]+" "+c[1];
-      return "POLYGON(("+poly+"))"
+      return "POLYGON(("+poly+c[0]+" "+c[1]+"))"
     },
     fetchDatesWithRasters: function () {
-      if (this.polygon.length > 0) {
-        var q = {srid: 3857, srid_to: 4326, polygon: this.polygon};
-        window.open(Ags.downloadUrl+"/j_find_raster_elements?"+Ags.helpers.enc(q), "_blank");
-      } else {
-        console.log('[ERROR] no given polygon')
-      }
+      if (this.polygon.length < 1) return console.log('[ERROR] no given polygon');
+      var q = {srid: 3857, srid_to: 4326, polygon: this.polygon};
+      window.open(this.origin+"/j_find_raster_elements?"+this.enc(q), "_blank");
+    },
+    cleanInteraction: function() {
+      this.source4Interaction.clear()
+      this.map.removeLayer(this.extractedImage)
+    },
+    overlayExtractedImage: function() {
+      this.map.removeLayer(this.extractedImage);
+      var q = Object.assign(this.baseParams, this.whenHash(), {streamed: 1, polygon: this.polygon});
+      this.extractedImage = new ol.layer.Image({
+        source:  new ol.source.ImageStatic({
+          title: 'extracted raster',
+          attributions: 'extracted raster',
+          url: this.origin+'/j_extract_'+this.format+'?'+this.enc(q),
+          imageExtent: this.boxExtent
+        })
+      });
+      this.map.addLayer(this.extractedImage);
+    },
+    panOn: function() {
+      this.map.removeInteraction(this.currentInteraction);
+      this.currentInteraction = new ol.interaction.DragPan();
+      this.map.addInteraction(this.currentInteraction);
     },
     drawPolygon: function (){
       this.map.removeInteraction(this.currentInteraction);
       this.currentInteraction = new ol.interaction.Draw({ type: 'Polygon' });
-      // on dragbox start, clean previous vector feature and raster (extr. image)
-      this.currentInteraction.on('drawstart',function(evt){
-        vm.$data.source4Interaction.clear();
-        vm.$data.map.removeLayer(vm.$data.extractedImage);
-      });
-
+      this.currentInteraction.on('drawstart', this.cleanInteraction); // clean any vector feat & raster (extr.img)
       this.currentInteraction.on('drawend',function(evt){
-        var g = evt.feature.getGeometry()
-        var featIn = new ol.Feature({ geometry: g });
-        vm.$data.source4Interaction.addFeature(featIn);
+        var g = evt.feature.getGeometry();
+        vm.$data.source4Interaction.addFeature(new ol.Feature({ geometry: g }));
         vm.$data.boxExtent = g.getExtent();
-        vm.$data.polygon = vm.wktPolygon(g)
-        var q = Object.assign(Ags.baseParams, vm.whenHash(), {streamed: 1, polygon: vm.$data.polygon});
+        vm.$data.polygon = vm.wktPolygon(g);
 
-        vm.$data.extractedImage = new ol.layer.Image({
-          source:  new ol.source.ImageStatic({
-            title: 'extracted raster',
-            attributions: 'extracted raster',
-            url: Ags.downloadUrl+'/j_extract_'+vm.$data.format+'?'+Ags.helpers.enc(q),
-            imageExtent: vm.$data.boxExtent
-          })
-        });
-        vm.$data.map.addLayer(vm.$data.extractedImage);
-
-        vm.$data.map.removeInteraction(vm.$data.currentInteraction);
-        vm.$data.currentInteraction = new ol.interaction.DragPan();
-        vm.$data.map.addInteraction(vm.$data.currentInteraction);
+        vm.overlayExtractedImage();
+        vm.panOn();
       });
 
       this.map.addInteraction(this.currentInteraction);
-    }
+    },
+    enc: function (data) {
+      var paramsAry = [];
+      Object.keys(data).forEach( function (k, idx, ary) {
+        paramsAry.push(encodeURIComponent(k) + '=' + encodeURIComponent(data[k]));
+      });
+      return paramsAry.join('&');
+    },
+    downloadNDVI: function () {
+      var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon});
+      window.open(this.origin+"/j_download_ndvi?"+this.enc(q), "_blank");
+    },
+    downloadPotYeld: function () {
+      var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon});
+      window.open(this.origin+"/j_download_potential_yeld?"+this.enc(q), "_blank");
+    },
+    downloadNitroYeld: function () {
+      var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon, nitro: this.unha});
+      window.open(this.origin+"/j_download_nitro_yeld?"+this.enc(q), "_blank");
+    },
   },
   computed: {
     nitroColors: function() {
@@ -133,8 +127,6 @@ var vm = new Vue({
   },
 })
 
-
-
 // var _geoFAIL = function () {
 //   console.log('Could not obtain location')
 //   _x.map.setView(new ol.View({ center: ol.proj.transform([15.00, 41.00],'EPSG:4326', 'EPSG:3857'), zoom: 10 }));
@@ -158,19 +150,3 @@ var vm = new Vue({
 //     console.log(error.response.headers);
 //   }
 // });
-
-//
-//   var _changeImageType = function (){
-//     _x.map.removeLayer(_x.extractedImage);
-//     var q = Object.assign(Ags.baseParams, _x.when, {streamed: 1, polygon: _x.polygonText})
-//     _x.extractedImage = new ol.layer.Image({
-//       source: new ol.source.ImageStatic({
-//         title: 'extracted raster',
-//         attributions: 'extracted raster',
-//         url: Ags.downloadUrl+'/j_extract_'+_x.imgType+'?'+Ags.helpers.enc(q),
-//         imageExtent: _x.boxExtent
-//       })
-//     });
-//     map.addLayer(extractedImage);
-//   }
-// } )();
