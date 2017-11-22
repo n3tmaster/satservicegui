@@ -40,7 +40,7 @@ nav a {
 aside {
   grid-area: aside;
   background:#29323f;
-  padding:20px;
+  padding:15px;
 }
 
 aside .sub-panel { margin:20px 0; }
