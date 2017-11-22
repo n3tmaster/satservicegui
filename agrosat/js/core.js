@@ -16,6 +16,7 @@ var vm = new Vue({
     extractedImage: null,
     source4Interaction: new ol.source.Vector(),
     map: null,
+    snd: new Audio("snd/button.mp3"), // buffers automatically when created
   },
   methods: {
     setWhen: function(aDate) {
@@ -82,8 +83,9 @@ var vm = new Vue({
       return paramsAry.join('&');
     },
     downloadNDVI: function () {
+      this.snd.play();
       var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon});
-      window.open(this.origin+"/j_download_ndvi?"+this.enc(q), "_blank");
+      window.open(this.origin+"/j_download_ndvi?"+this.enc(q));
     },
     downloadPotYeld: function () {
       var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon});
