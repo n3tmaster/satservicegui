@@ -9,18 +9,20 @@ var vm = new Vue({
     format: 'rgb',
     nitro: false,
     unha: 0,
-    when: "2017-10-15",
+    when: null,
     polygon: "",
     boxExtent: null,
     currentInteraction: null,
     extractedImage: null,
     source4Interaction: new ol.source.Vector(),
     map: null,
-    snd: new Audio("snd/button.mp3"), // buffers automatically when created
+    dates: [],
+    //snd: new Audio("snd/button.mp3"), // buffers automatically when created
   },
   methods: {
     setWhen: function(aDate) {
       this.when = aDate
+      vm.overlayExtractedImage();
     },
     whenHash: function() {
       var dSplit = this.when.split("-")
@@ -35,7 +37,19 @@ var vm = new Vue({
     fetchDatesWithRasters: function () {
       if (this.polygon.length < 1) return console.log('[ERROR] no given polygon');
       var q = {srid: 3857, srid_to: 4326, polygon: this.polygon};
-      window.open(this.origin+"/j_find_raster_elements?"+this.enc(q), "_blank");
+      var rasterUrl = this.origin+"/j_find_raster_elements?"+this.enc(q)
+      this.$http.get(rasterUrl, {withCredentials: false}).then(function (response) {
+        var dates = response.data.map(function(x){ return x.data })
+        var cal = document.getElementById('dates');
+        rome(cal, {time: false, dateValidator: rome.val.only(dates) }).on('data',vm.setWhen)
+        vm.$data.dates = dates;
+      }).catch(function (error) {
+        if (error.response) {
+          console.log(error.response.data);
+          console.log(error.response.status);
+          console.log(error.response.headers);
+        }
+      });
     },
     cleanInteraction: function() {
       this.source4Interaction.clear()
@@ -68,11 +82,9 @@ var vm = new Vue({
         vm.$data.source4Interaction.addFeature(new ol.Feature({ geometry: g }));
         vm.$data.boxExtent = g.getExtent();
         vm.$data.polygon = vm.wktPolygon(g);
-
-        vm.overlayExtractedImage();
+        vm.fetchDatesWithRasters()
         vm.panOn();
       });
-
       this.map.addInteraction(this.currentInteraction);
     },
     enc: function (data) {
@@ -83,7 +95,7 @@ var vm = new Vue({
       return paramsAry.join('&');
     },
     downloadNDVI: function () {
-      this.snd.play();
+      // this.snd.play();
       var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon});
       window.open(this.origin+"/j_download_ndvi?"+this.enc(q));
     },
@@ -124,31 +136,87 @@ var vm = new Vue({
     })
     _map.addControl(new ol.control.ZoomSlider());
     this.map = _map;
-    // Calendar
-    rome(document.getElementById('dates'), {time: false}).on('data',this.setWhen)
   },
 })
 
-// var _geoFAIL = function () {
-//   console.log('Could not obtain location')
-//   _x.map.setView(new ol.View({ center: ol.proj.transform([15.00, 41.00],'EPSG:4326', 'EPSG:3857'), zoom: 10 }));
-// };
-//
-// var _geoON =  function (position) {
-//   var coords = [position.coords.longitude, position.coords.latitude];
-//   _x.map.setView(new ol.View({ center: ol.proj.transform(coords,'EPSG:4326', 'EPSG:3857'), zoom: 15 }));
-// };
-//
-// var _geoLocate = function () {
-//   errMsg = "Sorry, your browser does not support geolocation services."
-//   navigator.geolocation ? navigator.geolocation.getCurrentPosition(_geoON, _geoFAIL) : console.log(errMsg);
-// };
+// Geolocation (real time)
+var _view = vm.map.getView()
 
+var markerEl = document.getElementById('geolocation_marker');
+var marker = new ol.Overlay({
+  positioning: 'center-center',
+  element: markerEl,
+  stopEvent: false
+});
+vm.map.addOverlay(marker);
 
-// axios.get(rasterUrl, {withCredentials: false}).catch(function (error) {
-//   if (error.response) {
-//     console.log(error.response.data);
-//     console.log(error.response.status);
-//     console.log(error.response.headers);
-//   }
-// });
+var positions = new ol.geom.LineString([],
+    /** @type {ol.geom.GeometryLayout} */ ('XYZM'));
+
+var geolocation = new ol.Geolocation(/** @type {olx.GeolocationOptions} */ ({
+  projection: _view.getProjection(),
+  trackingOptions: { maximumAge: 10000, enableHighAccuracy: true, timeout: 600000 }
+}));
+
+geolocation.on('change', function() {
+  var position = geolocation.getPosition();
+  var accuracy = geolocation.getAccuracy();
+  var heading = geolocation.getHeading() || 0;
+  var speed = geolocation.getSpeed() || 0;
+  var m = Date.now();
+
+  addPosition(position, heading, m, speed);
+
+  var coords = positions.getCoordinates();
+  var html = [
+    'Position: ' + position[0].toFixed(2) + ', ' + position[1].toFixed(2),
+    'Accuracy: ' + accuracy,
+    'Heading: ' + Math.round(radToDeg(heading)) + '&deg;',
+    'Speed: ' + (speed * 3.6).toFixed(1) + ' km/h',
+    'Delta: ' + Math.round(500) + 'ms'
+  ].join('<br />');
+  document.getElementById('info').innerHTML = html;
+});
+
+geolocation.on('error', function() { console.log('geolocation error'); });
+
+function radToDeg(rad) { return rad * 360 / (Math.PI * 2); }
+function degToRad(deg) { return deg * Math.PI * 2 / 360; }
+function mod(n) { return ((n % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI); }
+
+function addPosition(position, heading, m, speed) {
+  var x = position[0];
+  var y = position[1];
+  var fCoords = positions.getCoordinates();
+  var previous = fCoords[fCoords.length - 1];
+  var prevHeading = previous && previous[2];
+  if (prevHeading) {
+    var headingDiff = heading - mod(prevHeading);
+
+    if (Math.abs(headingDiff) > Math.PI) {
+      var sign = (headingDiff >= 0) ? 1 : -1;
+      headingDiff = -sign * (2 * Math.PI - Math.abs(headingDiff));
+    }
+    heading = prevHeading + headingDiff;
+  }
+  positions.appendCoordinate([x, y, heading, m]);
+
+  // only keep the 20 last coordinates
+  positions.setCoordinates(positions.getCoordinates().slice(-20));
+}
+
+var previousM = 0;
+function updateView() {
+  var m = Date.now() - 500 * 1.5;
+  m = Math.max(m, previousM);
+  previousM = m;
+  var c = positions.getCoordinateAtM(m, true);
+  if (c) { marker.setPosition(c); }
+}
+
+var geolocateBtn = document.getElementById('geo-locate');
+geolocateBtn.addEventListener('click', function() {
+  geolocation.setTracking(true); // Start position tracking
+  vm.map.on('postcompose', updateView);
+  //vm.map.render();
+}, false);

@@ -1,0 +1,1 @@
+s3cmd sync --delete-removed --acl-public agrosat/index.html agrosat/css agrosat/js agrosat/img agrosat/favicon.ico agrosat/whale.png s3://agrosat.microspino.com
