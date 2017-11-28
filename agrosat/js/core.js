@@ -1,3 +1,7 @@
+Vue.component('modal', {
+  template: '#modal-template'
+})
+
 Vue.prototype.$http = axios  // per usare this.$http.get in Vue
 var vm = new Vue({
   el: '#agrosat',
@@ -17,9 +21,17 @@ var vm = new Vue({
     source4Interaction: new ol.source.Vector(),
     map: null,
     dates: [],
+    loading: false,
+    showModal: false,
+    modalState: 'Disegna',
     //snd: new Audio("snd/button.mp3"), // buffers automatically when created
   },
   methods: {
+    modalStateForward: function(){
+      var states = ['Disegna','Osserva','Decidi', 'Agisci'];
+      var i = states.indexOf(this.modalState);
+      this.modalState = states[(i+1)%4]
+    },
     setWhen: function(aDate) {
       this.when = aDate
       vm.overlayExtractedImage();
@@ -35,6 +47,7 @@ var vm = new Vue({
       return "POLYGON(("+poly+c[0]+" "+c[1]+"))"
     },
     fetchDatesWithRasters: function () {
+      vm.$data.loading = true
       if (this.polygon.length < 1) return console.log('[ERROR] no given polygon');
       var q = {srid: 3857, srid_to: 4326, polygon: this.polygon};
       var rasterUrl = this.origin+"/j_find_raster_elements?"+this.enc(q)
@@ -43,12 +56,14 @@ var vm = new Vue({
         var cal = document.getElementById('dates');
         rome(cal, {time: false, dateValidator: rome.val.only(dates) }).on('data',vm.setWhen)
         vm.$data.dates = dates;
+        vm.$data.loading = false;
       }).catch(function (error) {
         if (error.response) {
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
         }
+        vm.$data.loading = false;
       });
     },
     cleanInteraction: function() {
@@ -107,6 +122,36 @@ var vm = new Vue({
       var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon, nitro: this.unha});
       window.open(this.origin+"/j_download_nitro_yeld?"+this.enc(q), "_blank");
     },
+    calcPotentialYeld: function() {
+      if(this.extractedImage) {
+        //this.map.removeLayer(this.extractedImage);
+        var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon, streamed: 1});
+        this.extractedImage = new ol.layer.Image({
+          source: new ol.source.ImageStatic({
+            title: 'extracted raster',
+            attributions: 'extracted raster',
+            url: this.origin+"/j_download_nitro_yeld?"+this.enc(q),
+            imageExtent: this.boxExtent
+          })
+        });
+        this.map.addLayer(this.extractedImage);
+      }
+    },
+    calcNitroPotentialYeldJS: function(){
+      if(this.extractedImage) {
+        //this.map.removeLayer(this.extractedImage);
+        var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon, nitro: this.unha});
+        this.extractedImage = new ol.layer.Image({
+          source: new ol.source.ImageStatic({
+            title: 'extracted raster',
+            attributions: 'extracted raster',
+            url: this.origin+"/j_calc_nitro_yeld?"+this.enc(q),
+            imageExtent: this.boxExtent
+          })
+        });
+        this.map.addLayer(this.extractedImage);
+      }
+    },
   },
   computed: {
     nitroColors: function() {
@@ -137,7 +182,7 @@ var vm = new Vue({
     _map.addControl(new ol.control.ZoomSlider());
     this.map = _map;
   },
-})
+});
 
 // Geolocation (real time)
 var _view = vm.map.getView()

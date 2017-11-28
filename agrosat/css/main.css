@@ -114,7 +114,34 @@ a:hover, a:active { color:#fcee6d;}
   line-height: 75%;
 }
 
+.btn {
+  color: #009688;
+  background: #fff;
+  border: 1px solid #009688;
+  font-size: 12px;
+  padding: 5px 7px;
+  font-weight: normal;
+  margin: 6px 0;
+  margin-right: 12px;
+  display: inline-block;
+  text-decoration: none;
+  min-width: 80px;
+  border-radius:0;
+  cursor:pointer;
+}
+.btn:hover, .btn:active {
+ color:#fff;
+ background:#009688;
+}
+.btn:focus {outline:0;}
+
 .instructions {
   text-align:justify;
   font-variant: all-caps;
 }
+
+@keyframes spinnn {
+  0% { transform: rotate(0deg); }
+  100% {  transform: rotate(359deg); }
+}
+#spinning-wheel { animation: spinnn 2s linear infinite; }
