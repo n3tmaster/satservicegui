@@ -13,7 +13,8 @@
   <link rel="stylesheet" href="https://openlayers.org/en/v4.5.0/css/ol.css" type="text/css">
 
   <link rel="stylesheet" href="css/rome.min.css" />
-  <link rel="stylesheet" href="css/pretty-checkbox.min.css" />
+  <!-- <link rel="stylesheet" href="css/pretty-checkbox.min.css" /> -->
+  <link rel="stylesheet" href="css/pretty-checkbox.css" />
   <link rel="stylesheet" href="css/modal.css" />
   <link rel="stylesheet" href="css/main.css" />
 
@@ -71,10 +72,17 @@
       <div id="spinnner" v-if="loading">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings" id="spinning-wheel"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
       </div>
+
       <div class="download-btn" id="ndvi-down" v-show="polygon && extractedImage">
-        <a href="javascript:void(0);" id="help" v-on:click="downloadNDVI">
+        <a href="javascript:void(0);" id="downloadNDVI" v-on:click="downloadNDVI">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download-cloud"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>
           <small>ndvi</small>
+        </a>
+      </div>
+      <div class="download-btn" id="nitro-down" v-show="polygon && nitro && extractedImage">
+        <a href="javascript:void(0);" id="downloadNitroYeld" v-on:click="downloadNitroYeld">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download-cloud"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>
+          <small>nitro</small>
         </a>
       </div>
     </div>
@@ -136,8 +144,8 @@
         </transition>
       </div>
       <div id="calculations">
-        <button v-show="extractedImage && !nitro" v-on:click.prevent="calcPotentialYeld">Pot.Yield</button>
-        <button v-show="extractedImage && nitro && unha" v-on:click.prevent="calcNitroPotentialYeldJS">Nitro.Yield</button>
+        <button class="btn" v-show="extractedImage && !nitro" v-on:click.prevent="calcPotentialYeld">Calc. resa Potenz.</button>
+        <button class="btn" v-show="extractedImage && nitro && unha" v-on:click.prevent="calcNitroPotentialYeldJS">Calcola resa Nitro</button>
       </div>
     </form>
 
@@ -199,7 +207,7 @@
             <div class="modal-footer">
               <slot name="footer">
                 <button class="forward btn" v-on:click="$emit('forward')">Avanti &rArr;</button>
-                <button class="close btn" v-on:click="$emit('close')">Ho Capito!</button>
+                <button class="close btn" v-on:click="$emit('close')">Chiudi</button>
               </slot>
             </div>
           </div>

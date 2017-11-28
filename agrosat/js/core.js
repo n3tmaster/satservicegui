@@ -128,7 +128,7 @@ var vm = new Vue({
     calcPotentialYeld: function() {
       if(this.extractedImage) {
         //this.map.removeLayer(this.extractedImage);
-        var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon, streamed: 1});
+        var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon});
         this.extractedImage = new ol.layer.Image({
           source: new ol.source.ImageStatic({
             title: 'extracted raster',

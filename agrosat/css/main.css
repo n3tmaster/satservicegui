@@ -112,6 +112,8 @@ a:hover, a:active { color:#fcee6d;}
   text-align: center;
   width: 24px;
   line-height: 75%;
+  display:inline-block;
+  margin-right:20px;
 }
 
 .btn {
@@ -134,6 +136,15 @@ a:hover, a:active { color:#fcee6d;}
  background:#009688;
 }
 .btn:focus {outline:0;}
+#calculations .btn {
+  color:#fff;
+  background:#009688;
+}
+#calculations .btn:hover, #calculations .btn:active {
+ color:#009688;
+ border-color:#fff;
+ background:#fff;
+}
 
 .instructions {
   text-align:justify;
@@ -145,3 +156,8 @@ a:hover, a:active { color:#fcee6d;}
   100% {  transform: rotate(359deg); }
 }
 #spinning-wheel { animation: spinnn 2s linear infinite; }
+
+/* pretty checkobox override */
+.pretty input:checked ~ .state.p-success label:after, .pretty.p-toggle .state.p-success label:after {
+  background-color: #009688 !important;
+}
