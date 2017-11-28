@@ -26,6 +26,10 @@ var vm = new Vue({
     modalState: 'Disegna',
     //snd: new Audio("snd/button.mp3"), // buffers automatically when created
   },
+  watch: {
+    when: function() { vm.overlayExtractedImage(); },
+    format: function() { vm.overlayExtractedImage(); },
+  },
   methods: {
     modalStateForward: function(){
       var states = ['Disegna','Osserva','Decidi', 'Agisci'];
@@ -34,7 +38,6 @@ var vm = new Vue({
     },
     setWhen: function(aDate) {
       this.when = aDate
-      vm.overlayExtractedImage();
     },
     whenHash: function() {
       var dSplit = this.when.split("-")
