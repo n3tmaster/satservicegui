@@ -255,16 +255,23 @@ function addPosition(position, heading, m, speed) {
 
 var previousM = 0;
 function updateView() {
-  var m = Date.now() - 500 * 1.5;
+  var updateInterval = 500;
+  var m = Date.now() - updateInterval * 1.5;
   m = Math.max(m, previousM);
   previousM = m;
   var c = positions.getCoordinateAtM(m, true);
   if (c) { marker.setPosition(c); }
 }
 
+
 var geolocateBtn = document.getElementById('geo-locate');
 geolocateBtn.addEventListener('click', function() {
-  geolocation.setTracking(true); // Start position tracking
+  console.log('Start position tracking')
+  geolocation.setTracking(true);
+  navigator.geolocation.getCurrentPosition( function(position) {
+    var c = [position.coords.longitude, position.coords.latitude];
+    vm.map.setView(new ol.View({ center: ol.proj.transform(c,'EPSG:4326', 'EPSG:3857'), zoom: 15 }));
+  });
   vm.map.on('postcompose', updateView);
   //vm.map.render();
 }, false);
