@@ -23,7 +23,7 @@ var vm = new Vue({
     dates: [],
     loading: false,
     showModal: false,
-    modalState: 'Disegna',
+    modalState: '1. Disegna',
     tracking: false,
     geocoding_api_key: 'AIzaSyAKiztRLYOLrYG-fvTsGZwRBjuQ1YJzzho',
     address: 'Via Giacomo Boni 15, Roma Italy',
@@ -33,28 +33,13 @@ var vm = new Vue({
     calDate: new Date(),
     hasPotentialYield: false,
     hasNitroYield: false,
-    scaleMin: 0,
-    scaleMax: 100,
-    //snd: new Audio("snd/button.mp3"), // buffers automatically when created
+    nitroMin: 0,
+    nitroMax: 100,
+    legendValues: []
   },
   computed: {
-    nitroColors: function() {
+    legendColors: function() {
       return this.nitro ? ['#FFFFC1','#42C9D2', '#101A79'] : ['#88210F', '#F6F140', '#1A6E1C']
-    },
-    scaleValues: function() {
-      var values = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1];
-      if (this.hasPotentialYield) { values = ["0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"] }
-      if (this.nitro) {
-        values = [];
-        this.getScaleValues();
-        var step = (this.scaleMax - this.scaleMin)/ 10.0
-        var rat = this.scaleMin
-        for (var i=0; i <= 10; i++) {
-          rat+=step
-          values.push(parseFloat(Math.round(rat * 100) / 100).toFixed(2))
-        }
-      }
-      return values;
     },
     nitroDownloadable: function() {
       return this.polygon && this.nitro && this.extractedImage && this.unha > 0 && this.hasNitroYield
@@ -71,22 +56,20 @@ var vm = new Vue({
       }
       return r
     },
-    menuOnColor: function() {
-      return this.menuOn ? '#fcee6d' : '#fff'
-    },
-    searchOnColor: function() {
-      return this.searchOn ? '#fcee6d' : '#fff'
-    },
-    calendarOnColor: function() {
-      return this.calendarOn ? '#fcee6d' : '#fff'
-    },
     calendarContent: function(){
       var _html = calendar(this.calDate, this.dates);
       return _html;
     },
     calendarHeading: function(){
-      var labels = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"]
-      return [labels[this.calDate.getMonth()], this.calDate.getFullYear()].join(' ')
+      var labels = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"];
+      return [labels[this.calDate.getMonth()], this.calDate.getFullYear()].join(' ');
+    },
+    nitroScale: function(){
+      var step = (this.nitroMax - this.nitroMin)/10.0;
+      var v = this.nitroMin;
+      var result = [];
+      for (var i=0; i <= 10; i++) {  v+=step; result.push(parseFloat(Math.round(v*100)/100).toFixed(1)) }
+      return result;
     }
   },
   watch: {
@@ -94,9 +77,35 @@ var vm = new Vue({
     format: function() { this.overlayExtractedImage(); },
   },
   methods: {
+    menuPick: function(item) {
+      this.overlayExtractedImage();
+      if (item == 'potYield') {
+        this.calcPotentialYeld();
+        this.legendValues = ["0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"];
+        this.nitro = false
+      }
+
+      if (item == 'rgb') {
+        this.format = item;
+        this.legendValues = []
+        this.nitro = false
+      }
+
+      if (item == 'ndvi') {
+        this.format = item;
+        this.legendValues = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1];
+        this.nitro = false
+      }
+
+      if (item == 'nitro') {
+        this.nitro = true
+      }
+    },
     moveMonth: function(step){
-      if (this.calDate.getMonth() == 0) {
+      if (this.calDate.getMonth() == 0 && step < 0 ) {
         this.calDate = new Date(this.calDate.getFullYear() - 1, 11, 1);
+      } else if (this.calDate.getMonth() == 11 && step > 0) {
+        this.calDate = new Date(this.calDate.getFullYear() + 1, 0, 1);
       } else {
         this.calDate = new Date(this.calDate.getFullYear(), this.calDate.getMonth()+step, 1);
       }
@@ -126,7 +135,7 @@ var vm = new Vue({
       });
     },
     modalStateForward: function(){
-      var states = ['Disegna','Osserva','Decidi', 'Agisci'];
+      var states = ['1. Disegna','2. Osserva','3. Decidi', '4. Agisci'];
       var i = states.indexOf(this.modalState);
       this.modalState = states[(i+1)%4]
     },
@@ -168,8 +177,8 @@ var vm = new Vue({
       var q = Object.assign({imgtype:'nitro',nitro:this.unha, srid: 3857, srid_to: 4326, polygon: this.polygon }, this.whenHash());
       var metadataUrl = this.origin+"/j_get_metadata?"+this.enc(q)
       this.$http.get(metadataUrl, {withCredentials: false}).then(function (response) {
-        vm.$data.scaleMin = response.data[0].min;
-        vm.$data.scaleMax = response.data[0].max;
+        vm.$data.nitroMin = response.data[0].min;
+        vm.$data.nitroMax = response.data[0].max;
         vm.$data.loading = false;
       }).catch(function (error) {
         if (error.response) {
@@ -243,7 +252,7 @@ var vm = new Vue({
       window.open(this.origin+"/j_download_nitro_yeld?"+this.enc(q), "_blank");
     },
     calcPotentialYeld: function() {
-      if(this.extractedImage) {
+      if (this.extractedImage) {
         this.map.removeLayer(this.extractedImage);
         var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon});
         this.extractedImage = new ol.layer.Image({
@@ -270,6 +279,7 @@ var vm = new Vue({
             imageExtent: this.boxExtent
           })
         });
+        this.getScaleValues();
         this.map.addLayer(this.extractedImage);
         this.hasNitroYield = true;
       }

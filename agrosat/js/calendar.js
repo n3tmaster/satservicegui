@@ -51,7 +51,7 @@ function calendar(startDate, hotDates) {
       var display_date = new Date(y, m, c);
       var dayClasses = ['day'];
       if (display_date.toDateString() == (new Date).toDateString()) { dayClasses.push('today') }
-      var isHot = hotDates.indexOf(dateToYMD(display_date)) > 0
+      var isHot = hotDates.indexOf(dateToYMD(display_date)) >= 0
       var cellContent = c;
       if (isHot) {
         dayClasses.push('dayOn')

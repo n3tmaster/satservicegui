@@ -11,7 +11,6 @@
 
   <link rel="stylesheet" href="css/normalize.css" />
   <link rel="stylesheet" href="https://openlayers.org/en/v4.5.0/css/ol.css" type="text/css">
-  <link rel="stylesheet" href="css/rome.min.css" />
   <link rel="stylesheet" href="css/modal.css" />
   <link rel="stylesheet" href="css/main.css" />
 
@@ -24,50 +23,65 @@
 <body lang="it">
   <div id="agrosat" v-cloak>
     <div id="map" class="map"></div>
+    <a id="info-button" href="/info" title="info and credits">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-info"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="8"></line></svg>
+    </a>
     <div id="loading" v-if="loading">
       <svg xmlns="https://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings" id="spinning-wheel"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
     </div>
 
     <modal v-if="showModal" @close="showModal=false" @forward="modalStateForward">
       <h3 slot="header">{{ modalState }}</h3>
-      <p slot="body" v-show="modalState=='Disegna'">
-        Puoi inserire coordinate, nome località o navigare la mappa.</br>
-        Trova il tuo campo e disegna i confini!
-      </p>
+      <div class="help-step" slot="body" v-show="modalState=='1. Disegna'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-crop"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"></path><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"></path></svg>
+        <p>
+          Puoi inserire coordinate, nome località o navigare la mappa.</br>
+          Trova il tuo campo e disegna i confini!
+        </p>
+      </div>
 
-      <p slot="body" v-show="modalState=='Osserva'">
-        Seleziona la data di interesse ed osserva il tuo campo:
-        se non ci sono nuvole puoi da subito valutare il vigore della tuo
-        coltura o la variabilità del suolo.
-      </p>
+      <div class="help-step" slot="body" v-show="modalState=='2. Osserva'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <p>
+          Seleziona la data di interesse ed osserva il tuo campo:
+          se non ci sono nuvole puoi da subito valutare il vigore della tuo
+          coltura o la variabilità del suolo.
+        </p>
+      </div>
 
-      <p slot="body" v-show="modalState=='Decidi'">
-        Sei pronto per la concimazione? Indica il quantitativo delle
-        unità da azoto (N/ha) che vorresti apportare al tuo campo, ti
-        aiuteremo a distribuirle nel modo migliore e se possibile ti
-        aiutiamo a ridurle! Non sei pronto? Allora valuta la resa potenziale
-        del tuo campo allo stato attuale e poi penseremo alla concimazione.
-      </p>
+      <div class="help-step" slot="body" v-show="modalState=='3. Decidi'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        <p>
+          Sei pronto per la concimazione? Indica il quantitativo delle
+          unità da azoto (N/ha) che vorresti apportare al tuo campo, ti
+          aiuteremo a distribuirle nel modo migliore e se possibile ti
+          aiutiamo a ridurle! Non sei pronto? Allora valuta la resa potenziale
+          del tuo campo allo stato attuale e poi penseremo alla concimazione.
+        </p>
+      </div>
 
-      <p slot="body" v-show="modalState=='Agisci'">
-        Sei ha una spandiconcime rateo variabile basta scaricare la
-        mappa di prescrizione georefenziata ed inserirla nel sistema
-        di supporto della tua macchina. <br/>Altrimenti clicca naviga e
-        potrai visualizzare direttamente la tua macchina su mappa e
-        distribuire la concimazione seguendo comodamente il gps del
-        tuo smartphone o tablet!
-      </p>
+      <div class="help-step" slot="body" v-show="modalState=='4. Agisci'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download-cloud"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>
+        <p>
+          Se hai una spandiconcime a rateo variabile, basta scaricare la
+          mappa di prescrizione georefenziata ed inserirla nel sistema
+          di supporto della tua macchina. <br/>Altrimenti clicca naviga e
+          potrai visualizzare direttamente la tua macchina su mappa e
+          distribuire la concimazione seguendo comodamente il gps del
+          tuo smartphone o tablet!
+        </p>
+      </div>
     </modal>
 
-
     <header>
-      <svg xmlns="https://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe">
+      <svg xmlns="https://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="agrosat-logo">
         <circle cx="12" cy="12" r="10"></circle>
         <line x1="2" y1="12" x2="22" y2="12"></line>
         <line x1="12" y1="2" x2="12" y2="22"></line>
         <ellipse cx="12" cy="12" rx="6" ry="9">
           <!-- <animate attributeName="rx" values="6;3;6" dur="2s" repeatCount="indefinite" v-if="nitro"/> -->
         </ellipse>
+        <circle cx="21" cy="2" r="2" fill="#009688" stroke-width="0"/>
       </svg>
       <h2>AgroSat</h2>
     </header>
@@ -76,26 +90,26 @@
       <div class="download-btn" id="nitro-down" v-if="nitroDownloadable">
         <a href="javascript:void(0);" id="downloadNitroYeld" v-on:click="downloadNitroYeld">
           <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download-cloud"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>
-          <small>concime di prec.</small>
+          <small>mappa concime</small>
         </a>
       </div>
       <div class="download-btn" id="potential-yield-down" v-if="potentialDownloadable">
         <a href="javascript:void(0);" id="downloadPotYeld" v-on:click="downloadPotYeld">
           <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download-cloud"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>
-          <small>resa pot.</small>
+          <small>mappa resa</small>
         </a>
       </div>
     </section>
 
     <nav>
-      <a href="javascript:void(0)" v-show="dates.length > 0" v-on:click="calendarOn=!calendarOn" v-bind:style="{color: calendarOnColor}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      <a href="javascript:void(0)" v-show="dates.length > 0" v-on:click="calendarOn=!calendarOn" v-bind:style="calendarOn && { color: '#fcee6d'}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
       </a>
 
       <a href="javascript:void(0);" id="track" title="Geo locate" v-on:click="trackSwitch">
         <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-crosshair"><circle cx="12" cy="12" r="10"></circle><line x1="22" y1="12" x2="18" y2="12"></line><line x1="6" y1="12" x2="2" y2="12"></line><line x1="12" y1="6" x2="12" y2="2"></line><line x1="12" y1="22" x2="12" y2="18"></line></svg>
       </a>
 
-      <a href="javascript:void(0)" v-on:click="searchOn=!searchOn" v-bind:style="{color: searchOnColor}">
+      <a href="javascript:void(0)" v-on:click="searchOn=!searchOn" v-bind:style="searchOn && { color: '#fcee6d'}">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       </a>
 
@@ -107,7 +121,7 @@
         <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-crop"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"></path><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"></path></svg>
       </a>
 
-      <a href="javascript:void(0)" v-if="polygon" v-on:click="menuOn=!menuOn" v-bind:style="{ color: menuOnColor }">
+      <a href="javascript:void(0)" v-if="polygon" v-on:click="menuOn=!menuOn" v-bind:style="menuOn && { color: '#fcee6d' }">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
       </a>
 
@@ -122,10 +136,10 @@
         <input id="address" v-model="address" v-on:keyup.13="geocode"/>
       </div>
       <div id="choices-menu" v-if="menuOn">
-        <a href="javascript:void(0);" v-on:click="format='rgb'">Colore Naturale</a>
-        <a href="javascript:void(0);" v-on:click="format='ndvi'">Stato Coltura</a>
-        <a href="javascript:void(0);" v-show="extractedImage && !nitro" v-on:click="calcPotentialYeld">Cacola Resa Potenziale</a>
-        <a href="javascript:void(0);" v-on:click="nitro=!nitro">Concime</a>
+        <a href="javascript:void(0)" @click="menuPick('rgb')">Colore Naturale</a>
+        <a href="javascript:void(0)" @click="menuPick('ndvi')">Stato Coltura</a>
+        <a href="javascript:void(0)" @click="menuPick('potYield')" v-show="extractedImage && !nitro">Resa Potenziale</a>
+        <a href="javascript:void(0)" @click="menuPick('nitro')">Concime</a>
       </div>
       <div id="raster-calendar" v-show="calendarOn">
         <div id="heading">
@@ -154,23 +168,14 @@
       <svg width="100%" height="30" v-if="displayLegend">
         <defs>
           <linearGradient id="Gradient1" x1="0" y1="0" x2="100%" y2="0">
-            <stop offset="0%" v-bind:stop-color="nitroColors[0]" />
-            <stop offset="50%" v-bind:stop-color="nitroColors[1]" />
-            <stop offset="100%" v-bind:stop-color="nitroColors[2]" />
+            <stop offset="0%" v-bind:stop-color="legendColors[0]" />
+            <stop offset="50%" v-bind:stop-color="legendColors[1]" />
+            <stop offset="100%" v-bind:stop-color="legendColors[2]" />
           </linearGradient>
         </defs>
         <rect x="0" y="0" width="100%" height="100" fill= "url(#Gradient1)" stroke="none" />
-        <text text-anchor="start" x="1%" y="25" fill="#1E2530" font-size="12">{{ scaleValues[0] }}</text>
-        <text text-anchor="middle" x="10%" y="25" fill="#1E2530" font-size="12">{{ scaleValues[1] }}</text>
-        <text text-anchor="middle" x="20%" y="25" fill="#1E2530" font-size="12">{{ scaleValues[2] }}</text>
-        <text text-anchor="middle" x="30%" y="25" fill="#1E2530" font-size="12">{{ scaleValues[3] }}</text>
-        <text text-anchor="middle" x="40%" y="25" fill="#1E2530" font-size="12">{{ scaleValues[4] }}</text>
-        <text text-anchor="middle" x="50%" y="25" fill="#1E2530" font-size="12">{{ scaleValues[5] }}</text>
-        <text text-anchor="middle" x="60%" y="25" fill="#1E2530" font-size="12">{{ scaleValues[6] }}</text>
-        <text text-anchor="middle" x="70%" y="25" fill="#1E2530" font-size="12">{{ scaleValues[7] }}</text>
-        <text text-anchor="middle" x="80%" y="25" fill="#1E2530" font-size="12">{{ scaleValues[8] }}</text>
-        <text text-anchor="middle" x="90%" y="25" fill="#1E2530" font-size="12">{{ scaleValues[9] }}</text>
-        <text text-anchor="end" x="100%" y="25" fill="#1E2530" font-size="12">{{ scaleValues[10] }}</text>
+        <text v-if="nitro" v-for="(v,i) in nitroScale" v-bind:text-anchor="i==10 ? 'end' :''" v-bind:x="(i*10)+'%'" y="25" v-bind:fill="i > 4 ? '#EBEEA8' : '#0E146B'" font-size="12">{{ v }}</text>
+        <text v-if="!nitro" v-for="(v,i) in legendValues" v-bind:text-anchor="i==10 ? 'end' :''" v-bind:x="(i*10)+'%'" y="25" fill="#1E2530" font-size="12">{{ v }}</text>
       </svg>
     </section>
 

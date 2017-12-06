@@ -224,6 +224,20 @@ input#address {
   justify-content: space-around;
 }
 
+#info-button {
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background-color:#29323f;
+  position:absolute;
+  bottom:75px;
+  left:15px;
+  z-index:999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @keyframes spinnn {
   0% { transform: rotate(0deg); }
   100% {  transform: rotate(359deg); }
@@ -232,6 +246,9 @@ input#address {
 
 .ol-zoomslider {
   top: 6.5em;
-  left: 1em;
+  left: 15px;
   height: 200px;
 }
+
+div.help-step svg {float:left;stroke:#29323f;}
+div.help-step p {padding-left:60px;}
