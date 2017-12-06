@@ -23,7 +23,7 @@
 <body lang="it">
   <div id="agrosat" v-cloak>
     <div id="map" class="map"></div>
-    <a id="info-button" href="/info" title="info and credits">
+    <a id="info-button" href="/info" title="Informazioni">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-info"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="8"></line></svg>
     </a>
     <div id="loading" v-if="loading">
@@ -102,30 +102,30 @@
     </section>
 
     <nav>
-      <a href="javascript:void(0)" v-show="dates.length > 0" v-on:click="calendarOn=!calendarOn" v-bind:style="calendarOn && { color: '#fcee6d'}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      <a href="javascript:void(0)" title="Seleziona data" v-show="dates.length > 0" v-on:click="calendarOn=!calendarOn" v-bind:style="calendarOn && { color: '#fcee6d'}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
       </a>
 
-      <a href="javascript:void(0);" id="track" title="Geo locate" v-on:click="trackSwitch">
+      <a href="javascript:void(0);" id="track" title="Tua posizione" v-on:click="trackSwitch">
         <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-crosshair"><circle cx="12" cy="12" r="10"></circle><line x1="22" y1="12" x2="18" y2="12"></line><line x1="6" y1="12" x2="2" y2="12"></line><line x1="12" y1="6" x2="12" y2="2"></line><line x1="12" y1="22" x2="12" y2="18"></line></svg>
       </a>
 
-      <a href="javascript:void(0)" v-on:click="searchOn=!searchOn" v-bind:style="searchOn && { color: '#fcee6d'}">
+      <a href="javascript:void(0)" v-on:click="searchOn=!searchOn" title="Inserisci località" v-bind:style="searchOn && { color: '#fcee6d'}">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       </a>
 
-      <a href="javascript:void(0);" id="pan" title="Pan - Zoom Mode" v-on:click="panOn">
+      <a href="javascript:void(0);" id="pan" title="Muovi mappa" v-on:click="panOn">
         <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-move"><polyline points="5 9 2 12 5 15"></polyline><polyline points="9 5 12 2 15 5"></polyline><polyline points="15 19 12 22 9 19"></polyline><polyline points="19 9 22 12 19 15"></polyline><line x1="2" y1="12" x2="22" y2="12"></line><line x1="12" y1="2" x2="12" y2="22"></line></svg>
       </a>
 
-      <a href="javascript:void(0);" id="draw-poly" v-on:click="drawPolygon" title="Draw Polygon">
+      <a href="javascript:void(0);" id="draw-poly" v-on:click="drawPolygon" title="Disegna campo">
         <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-crop"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"></path><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"></path></svg>
       </a>
 
-      <a href="javascript:void(0)" v-if="polygon" v-on:click="menuOn=!menuOn" v-bind:style="menuOn && { color: '#fcee6d' }">
+      <a href="javascript:void(0)" title="Mappe" v-if="polygon" v-on:click="menuOn=!menuOn" v-bind:style="menuOn && { color: '#fcee6d' }">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
       </a>
 
-      <a href="javascript:void(0);" id="help" v-on:click="showModal=true">
+      <a href="javascript:void(0);" id="help" title="Help" v-on:click="showModal=true">
         <svg xmlns="https://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-help-circle"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="17" x2="12" y2="17"></line></svg>
       </a>
 
@@ -136,8 +136,8 @@
         <input id="address" v-model="address" v-on:keyup.13="geocode"/>
       </div>
       <div id="choices-menu" v-if="menuOn">
-        <a href="javascript:void(0)" @click="menuPick('rgb')">Colore Naturale</a>
-        <a href="javascript:void(0)" @click="menuPick('ndvi')">Stato Coltura</a>
+        <a href="javascript:void(0)" @click="menuPick('naturalColor')">Colore Naturale</a>
+        <a href="javascript:void(0)" @click="menuPick('agroState')">Stato Coltura</a>
         <a href="javascript:void(0)" @click="menuPick('potYield')" v-show="extractedImage && !nitro">Resa Potenziale</a>
         <a href="javascript:void(0)" @click="menuPick('nitro')">Concime</a>
       </div>

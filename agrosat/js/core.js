@@ -35,24 +35,26 @@ var vm = new Vue({
     hasNitroYield: false,
     nitroMin: 0,
     nitroMax: 100,
-    legendValues: []
+    legendValues: [],
+    menuSelection: 'naturalColor'
   },
   computed: {
     legendColors: function() {
       return this.nitro ? ['#FFFFC1','#42C9D2', '#101A79'] : ['#88210F', '#F6F140', '#1A6E1C']
     },
     nitroDownloadable: function() {
-      return this.polygon && this.nitro && this.extractedImage && this.unha > 0 && this.hasNitroYield
+      return this.polygon && this.nitro && this.extractedImage && this.unha > 0 && this.hasNitroYield && this.menuSelection == 'nitro'
     },
     potentialDownloadable: function() {
-      return this.polygon && this.extractedImage && !this.nitro && this.hasPotentialYield
+      return this.polygon && this.extractedImage && !this.nitro && this.hasPotentialYield && this.menuSelection == 'potYield'
     },
     displayLegend: function() {
+      if (this.loading) { return false }
       var r = false
       if (this.nitro) {
         r = (this.extractedImage && this.unha > 0 && this.hasNitroYield )
       } else {
-        r = (this.extractedImage && this.format == 'ndvi')
+        r = (this.extractedImage && this.legendValues.length > 0)
       }
       return r
     },
@@ -67,8 +69,8 @@ var vm = new Vue({
     nitroScale: function(){
       var step = (this.nitroMax - this.nitroMin)/10.0;
       var v = this.nitroMin;
-      var result = [];
-      for (var i=0; i <= 10; i++) {  v+=step; result.push(parseFloat(Math.round(v*100)/100).toFixed(1)) }
+      var result = [v];
+      for (var i=0; i < 10; i++) {  v+=step; result.push(parseFloat(Math.round(v*100)/100).toFixed(1)) }
       return result;
     }
   },
@@ -80,24 +82,28 @@ var vm = new Vue({
     menuPick: function(item) {
       this.overlayExtractedImage();
       if (item == 'potYield') {
+        this.menuSelection = 'potYield'
         this.calcPotentialYeld();
         this.legendValues = ["0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"];
         this.nitro = false
       }
 
-      if (item == 'rgb') {
-        this.format = item;
+      if (item == 'naturalColor') {
+        this.menuSelection = 'naturalColor'
+        this.format = 'rgb';
         this.legendValues = []
         this.nitro = false
       }
 
-      if (item == 'ndvi') {
-        this.format = item;
+      if (item == 'agroState') {
+        this.menuSelection = 'agroState'
+        this.format = 'ndvi';
         this.legendValues = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1];
         this.nitro = false
       }
 
       if (item == 'nitro') {
+        this.menuSelection = 'nitro'
         this.nitro = true
       }
     },
