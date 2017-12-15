@@ -47,8 +47,14 @@
     </section>
 
     <nav>
-      <a v-for="(s, i) in steps" v-bind:class="current==s ? 'curr':''" @click="current=s" href="javascript:void(0)">{{ s }}</a>
-      <a href="https://www.agrosat.it/app/" id="enter-app">Entra &raquo;</a>
+      <ul>
+        <li v-for="(s, i) in steps" v-bind:class="stepClass(s, i)">
+          <a @click="current=s" href="javascript:void(0)">{{ s }}</a>
+        </li>
+        <li id="enter-app">
+          <a href="https://www.agrosat.it/app/">Entra!</a>
+        </li>
+      </ul>
     </nav>
 
     <main>
@@ -165,6 +171,22 @@
       data: {
         steps: ["Disegna", "Osserva", "Analizza", "Decidi"],
         current: "Disegna"
+      },
+      methods: {
+        stepClass: function(step, index) {
+          var cssClasses = []
+          var stepIndex = this.steps.indexOf(this.current)
+          if (this.current==step ) {
+            cssClasses.push('curr')
+          }
+          if (index > stepIndex ) {
+            cssClasses.push('succ')
+          }
+          if (index < stepIndex) {
+            cssClasses.push('prec')
+          }
+          return cssClasses.join(' ')
+        }
       }
     })
   </script>

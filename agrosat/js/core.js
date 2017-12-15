@@ -36,7 +36,8 @@ var vm = new Vue({
     nitroMin: 0,
     nitroMax: 100,
     legendValues: [],
-    menuSelection: 'naturalColor'
+    menuSelection: 'naturalColor',
+    noData: false
   },
   computed: {
     legendColors: function() {
@@ -116,10 +117,6 @@ var vm = new Vue({
         this.calDate = new Date(this.calDate.getFullYear(), this.calDate.getMonth()+step, 1);
       }
     },
-    closeAll: function(){
-      this.menuOn = false;
-      this.searchOn = false;
-    },
     geocode: function(){
       this.loading = true;
       this.tracking = false;
@@ -165,6 +162,7 @@ var vm = new Vue({
       var rasterUrl = this.origin+"/j_find_raster_elements?"+this.enc(q)
       this.$http.get(rasterUrl, {withCredentials: false}).then(function (response) {
         var dates = response.data.map(function(x){ return x.data })
+        if (dates.length == 0) { vm.$data.noData = true }
         vm.$data.dates = dates.sort();
         vm.$data.when = vm.$data.dates.slice(-1)[0];
         vm.$data.loading = false;
@@ -244,20 +242,20 @@ var vm = new Vue({
       });
       return paramsAry.join('&');
     },
-    // downloadNDVI: function () {
-    //   // this.snd.play();
-    //   var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon});
-    //   window.open(this.origin+"/j_download_ndvi?"+this.enc(q));
-    // },
     downloadPotYeld: function () {
+      this.loading = true;
       var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon, streamed: 0});
       window.open(this.origin+"/j_calc_potential_yeld?"+this.enc(q), "_blank");
+      this.loading = false;
     },
     downloadNitroYeld: function () {
+      this.loading = true;
       var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon, nitro: this.unha, streamed: 0});
       window.open(this.origin+"/j_download_nitro_yeld?"+this.enc(q), "_blank");
+      this.loading = false;
     },
     calcPotentialYeld: function() {
+      this.loading = true;
       if (this.extractedImage) {
         this.map.removeLayer(this.extractedImage);
         var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon});
@@ -272,8 +270,10 @@ var vm = new Vue({
         this.map.addLayer(this.extractedImage);
         this.hasPotentialYield = true;
       }
+      this.loading = false;
     },
     calcNitroPotentialYeld: function(){
+      this.loading = true;
       if(this.extractedImage) {
         this.map.removeLayer(this.extractedImage);
         var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon, nitro: this.unha});
@@ -289,6 +289,7 @@ var vm = new Vue({
         this.map.addLayer(this.extractedImage);
         this.hasNitroYield = true;
       }
+      this.loading = false;
     },
     centerMap: function(lat, long) {
       console.log("Ricerca toponimo >> Long: " + long + " Lat: " + lat);
@@ -367,9 +368,9 @@ _geolocation.on('change', function() {
 
 // handle geolocation error.
 _geolocation.on('error', function(error) {
-  var info = document.getElementById('info');
-  info.innerHTML = error.message;
-  info.style.display = '';
+  vm.$data.noData = true;
+  var noDataEl = document.querySelector('#no-data h1 span');
+  noDataEl.innerHTML = error.message;
 });
 
 var accuracyFeature = new ol.Feature();
