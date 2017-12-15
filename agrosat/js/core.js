@@ -8,7 +8,7 @@ var vm = new Vue({
   data: {
     name: 'AgroSat App',
     description: '0.0.1',
-    origin: "https://149.139.16.54:8443/ssws/api/download",
+    origin: "https://agrosat.fi.ibimet.cnr.it:8443/ssws/api/download",
     baseParams: {table_name: 'ndvi', srid: 3857, srid_to: 4326, streamed: 0},
     format: 'rgb',
     nitro: false,
@@ -69,8 +69,8 @@ var vm = new Vue({
     nitroScale: function(){
       var step = (this.nitroMax - this.nitroMin)/10.0;
       var v = this.nitroMin;
-      var result = [v];
-      for (var i=0; i < 10; i++) {  v+=step; result.push(parseFloat(Math.round(v*100)/100).toFixed(1)) }
+      var result = [Math.round(v)];
+      for (var i=0; i < 10; i++) {  v+=step; result.push(Math.round(v)) }
       return result;
     }
   },
@@ -250,11 +250,11 @@ var vm = new Vue({
     //   window.open(this.origin+"/j_download_ndvi?"+this.enc(q));
     // },
     downloadPotYeld: function () {
-      var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon});
-      window.open(this.origin+"/j_download_potential_yeld?"+this.enc(q), "_blank");
+      var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon, streamed: 0});
+      window.open(this.origin+"/j_calc_potential_yeld?"+this.enc(q), "_blank");
     },
     downloadNitroYeld: function () {
-      var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon, nitro: this.unha});
+      var q = Object.assign(this.baseParams, this.whenHash(), {polygon: this.polygon, nitro: this.unha, streamed: 0});
       window.open(this.origin+"/j_download_nitro_yeld?"+this.enc(q), "_blank");
     },
     calcPotentialYeld: function() {
@@ -318,7 +318,8 @@ var vm = new Vue({
           coordinateFormat: function (c) { var x = c[0].toFixed(3); var y = c[1].toFixed(3);return x+', '+y;},
           target: 'coordinates'
         }),
-        new ol.control.ZoomSlider()
+        //new ol.control.ZoomSlider()
+        new ol.control.Zoom()
       ],
       interactions: ol.interaction.defaults({ mouseWheelZoom: false })
     })

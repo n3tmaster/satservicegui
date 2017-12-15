@@ -7,6 +7,10 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="description" content="Migliora le tue coltivazioni attraverso una concimazione precisa e puntuale">
   <meta name="author" content="CNR Ibimet - Daniele Spinosa">
+  <link rel="apple-touch-icon-precomposed" sizes="57x57" href="favicon-apple-touch-114.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="favicon-apple-touch-114.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="favicon-apple-touch-144.png">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="favicon-apple-touch-144.png">
   <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64" href="../favicon.ico">
 
   <link rel="stylesheet" href="../css/normalize.css" />
@@ -21,7 +25,6 @@
         <line x1="2" y1="12" x2="22" y2="12"></line>
         <line x1="12" y1="2" x2="12" y2="22"></line>
         <ellipse cx="12" cy="12" rx="6" ry="9">
-          <!-- <animate attributeName="rx" values="6;3;6" dur="2s" repeatCount="indefinite" v-if="nitro"/> -->
         </ellipse>
         <circle cx="21" cy="2" r="2" fill="#009688" stroke-width="0"/>
       </svg>
@@ -40,8 +43,8 @@
 
       <p>
         <strong>Agrosat</strong> &egrave; un servizio <strong>totalmente gratuito</strong> di supporto al settore cerealicolo.<br/>
-        utilizza immagini acquisite dalle piattaforme <strong>Sentinel-2 ESA.</strong><br/>
-        &egrave; un prodotto sviluppato da <strong>CNR-IBIMET</strong>.
+        Utilizza immagini acquisite dalle piattaforme <strong>Sentinel-2 ESA.</strong><br/>
+        E' un prodotto sviluppato da <strong>CNR-IBIMET</strong>.
       </p>
 
       <h3>Sviluppatori</h3>
@@ -51,6 +54,11 @@
         Filippo Di Gennaro<br/>
         Beniamino Gioli<br/>
         Alessandro Matese
+      </p>
+
+      <h3>Sviluppo Frontend</h3>
+      <p>
+        Daniele Spinosa
       </p>
 
       <p>supporto tecnico:
@@ -88,27 +96,45 @@
     </aside>
 
     <section id="logos">
-      <img src="../img/cnr.png" width="381" height="85" alt="CNR Ibimet">
-      <img src="../img/barilla.png" width="190" height="72" alt="Barilla">
-      <img src="../img/bioagro.png" width="121" height="66" alt="Dip. Scienze Bio Agroalimentari" title="Consiglio Nazionale delle Ricerce - Dipartimento di Scienze Bio Agroalimentari">
-      <div id="open-source">
+      <img src="../img/cnr.png" alt="CNR Ibimet">
+      <img src="../img/BarillaGroup.jpg" alt="Barilla Group">
+      <img src="../img/bioagro.png" alt="Dip. Scienze Bio Agroalimentari" title="Consiglio Nazionale delle Ricerce - Dipartimento di Scienze Bio Agroalimentari">
+    </section>
+
+    <section id="oss">
+      <div>
         <p>Nello sviluppo di Agrosat sono state usate le seguenti librerie e icone open source</p>
-        <div id="lib-links">
+        <p>
+          <a href="https://github.com/jax-rs" target="_blank">
+            <img src="../img/jaxrs.png" alt="Jaxrs">
+            <span>JaxRs</span>
+          </a>
+
+          <a href="https://openlayers.org/" target="_blank">
+            <img src="../img/openlayers.png" alt="Openlayers">
+            <span>OpenLayers</span>
+          </a>
+
+          <a href="https://openlayers.org/" target="_blank">
+            <img src="../img/postgis.png" alt="Postgis">
+            <span>PostGis</span>
+          </a>
+
           <a href="https://feathericons.com/" target="_blank">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17" y1="15" x2="9" y2="15"></line></svg>
-            feather icons
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"></path><line x1="16" y1="8" x2="2" y2="22"></line><line x1="17" y1="15" x2="9" y2="15"></line></svg>
+            <span>feather icons</span>
           </a>
 
           <a href="https://vuejs.org/" target="_blank">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 196.32 170.02"><defs><style>.cls-1{fill:#42b883;}.cls-2{fill:#35495e;}</style></defs><title>logo</title><polygon class="cls-1" points="120.83 0 98.16 39.26 75.49 0 0 0 98.16 170.02 196.32 0 120.83 0"/><polygon class="cls-2" points="120.83 0 98.16 39.26 75.49 0 39.26 0 98.16 102.01 157.06 0 120.83 0"/></svg>
-            VueJS
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 196.32 170.02"><defs><style>.cls-1{fill:#42b883;}.cls-2{fill:#35495e;}</style></defs><title>logo</title><polygon class="cls-1" points="120.83 0 98.16 39.26 75.49 0 0 0 98.16 170.02 196.32 0 120.83 0"/><polygon class="cls-2" points="120.83 0 98.16 39.26 75.49 0 39.26 0 98.16 102.01 157.06 0 120.83 0"/></svg>
+            <span>VueJS</span>
           </a>
 
           <a href="https://github.com/axios/axios" target="_blank">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            AxiosJS
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            <span>AxiosJS</span>
           </a>
-        </div>
+        </p>
       </div>
     </section>
 
