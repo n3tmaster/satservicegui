@@ -25,6 +25,8 @@ var vm = new Vue({
     showModal: false,
     modalState: '1. Disegna',
     tracking: false,
+    panning: false,
+    drawing: false,
     geocoding_api_key: 'AIzaSyAKiztRLYOLrYG-fvTsGZwRBjuQ1YJzzho',
     address: 'Via Giacomo Boni 15, Roma Italy',
     menuOn: false,
@@ -217,11 +219,15 @@ var vm = new Vue({
       }
     },
     panOn: function() {
+      this.panning = true;
+      this.drawing = false;
       this.map.removeInteraction(this.currentInteraction);
       this.currentInteraction = new ol.interaction.DragPan();
       this.map.addInteraction(this.currentInteraction);
     },
     drawPolygon: function (){
+      this.panning = false;
+      this.drawing = true;
       this.map.removeInteraction(this.currentInteraction);
       this.currentInteraction = new ol.interaction.Draw({ type: 'Polygon' });
       this.currentInteraction.on('drawstart', this.cleanInteraction); // clean any vector feat & raster (extr.img)
@@ -344,7 +350,7 @@ var positions = new ol.geom.LineString([],
 
 var geolocation = new ol.Geolocation(/** @type {olx.GeolocationOptions} */ ({
   projection: _view.getProjection(),
-  trackingOptions: { maximumAge: 5000, enableHighAccuracy: true, timeout: 3000 }
+  trackingOptions: { maximumAge: 600000, enableHighAccuracy: true, timeout: 500 }
 }));
 
 geolocation.on('change', function() {

@@ -190,3 +190,27 @@ section.fig div.fade2 {
   50% { opacity: 1}
   100% { opacity: 0}
 }
+
+@media (max-width: 414px) {
+  div.page {
+    display:grid;
+    background-color:#fff;
+    grid-template-areas: "fig" "text";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-gap:15px;
+    padding:15px;
+  }
+  section.text {
+    min-height:150px;
+  }
+  section.text.with-fading-fig {
+    padding-top:340px;
+  }
+  main {padding:0;}
+  nav {padding:0;}
+  nav ul li:first-child {width:75px;}
+  nav ul li {
+    width:90px;
+  }
+}

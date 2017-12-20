@@ -14,11 +14,13 @@ h1, h2, h3, h4, strong { color:#131313;}
   grid-template-areas: "header nav"
                        "title title"
                        "main aside"
-                       "logos oss"
+                       "oss oss"
+                       "logos logos"
                        "footer footer";
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 60px
                       60px
+                      auto
                       auto
                       140px
                       30px;
@@ -139,3 +141,32 @@ a:hover, a:active { color:#fcee6d;}
 
 a#support-mail:link, a#support-mail:visited {color: #29323f;}
 a#support-mail:hover, a#support-mail:active {color: #009688;}
+
+@media (max-width: 414px) {
+  #agrosat {
+    display:grid;
+    grid-template-areas: "header nav"
+                         "title title"
+                         "main main"
+                         "aside aside"
+                         "oss oss"
+                         "logos logos"
+                         "footer footer";
+    grid-template-columns:1fr 1fr;
+    grid-template-rows: 60px
+                        60px
+                        auto
+                        auto
+                        auto
+                        auto
+                        30px;
+    height:100%;
+  }
+
+  section#oss a:link, section#oss a:visited {
+    width:85px;
+  }
+  section#logos {
+    flex-direction:column;
+  }
+}
