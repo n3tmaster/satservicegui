@@ -129,15 +129,14 @@ var vm = new Vue({
       this.$http.get(url, {withCredentials: false}).then(function (response) {
         var loc = response.data.results[0].geometry.location;
         vm.centerMap(loc.lat, loc.lng)
-        vm.$data.loading = false;
       }).catch(function (error) {
         if (error.response) {
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
         }
-        vm.$data.loading = false;
       });
+      this.loading = true;
     },
     modalStateForward: function(){
       var states = ['1. Disegna','2. Osserva','3. Decidi', '4. Agisci'];
@@ -167,15 +166,14 @@ var vm = new Vue({
         if (dates.length == 0) { vm.$data.noData = true }
         vm.$data.dates = dates.sort();
         vm.$data.when = vm.$data.dates.slice(-1)[0];
-        vm.$data.loading = false;
       }).catch(function (error) {
         if (error.response) {
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
         }
-        vm.$data.loading = false;
       });
+      this.loading = false
     },
     getScaleValues: function() {
       if (this.polygon.length < 1) return console.log('[ERROR] no given polygon');
@@ -185,25 +183,24 @@ var vm = new Vue({
       this.$http.get(metadataUrl, {withCredentials: false}).then(function (response) {
         vm.$data.nitroMin = response.data[0].min;
         vm.$data.nitroMax = response.data[0].max;
-        vm.$data.loading = false;
       }).catch(function (error) {
         if (error.response) {
           console.log(error.response.data);
           console.log(error.response.status);
           console.log(error.response.headers);
         }
-        vm.$data.loading = false;
       });
+      this.loading = false
     },
     cleanInteraction: function() {
       this.source4Interaction.clear()
       this.map.removeLayer(this.extractedImage)
     },
     overlayExtractedImage: function() {
+      this.loading = true;
       if (this.when && this.polygon) {
         this.map.removeLayer(this.extractedImage);
         var q = Object.assign(this.baseParams, this.whenHash(), {streamed: 1, polygon: this.polygon});
-        this.loading = true;
         this.extractedImage = new ol.layer.Image({
           source:  new ol.source.ImageStatic({
             title: 'extracted raster',
@@ -213,10 +210,10 @@ var vm = new Vue({
           })
         });
         this.map.addLayer(this.extractedImage);
-        this.loading = false;
       } else {
         console.log('ERROR: Unable to fetch an image, either "when" or a polygon is missing')
       }
+      this.loading = false;
     },
     panOn: function() {
       this.panning = true;
@@ -350,7 +347,7 @@ var positions = new ol.geom.LineString([],
 
 var geolocation = new ol.Geolocation(/** @type {olx.GeolocationOptions} */ ({
   projection: _view.getProjection(),
-  trackingOptions: { maximumAge: 600000, enableHighAccuracy: true, timeout: 500 }
+  trackingOptions: { maximumAge: 600000, enableHighAccuracy: true, timeout: 300 }
 }));
 
 geolocation.on('change', function() {
