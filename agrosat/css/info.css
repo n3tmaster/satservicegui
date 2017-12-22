@@ -14,13 +14,11 @@ h1, h2, h3, h4, strong { color:#131313;}
   grid-template-areas: "header nav"
                        "title title"
                        "main aside"
-                       "oss oss"
                        "logos logos"
                        "footer footer";
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 60px
                       60px
-                      auto
                       auto
                       140px
                       30px;
@@ -96,23 +94,6 @@ section#logos a svg {
   margin-right:8px;
 }
 
-section#oss {
-  grid-area: oss;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-}
-section#oss a:link, section#oss a:visited {
-  color:black;
-  width:98px;
-  display:inline-block;
-  text-align:center;
-}
-section#oss a span {
-  display:block;
-}
-
 nav a {
   display:inline-block;
   width:24px;
@@ -141,6 +122,19 @@ a:hover, a:active { color:#fcee6d;}
 
 a#support-mail:link, a#support-mail:visited {color: #29323f;}
 a#support-mail:hover, a#support-mail:active {color: #009688;}
+
+
+label[for=oss-toggle] { cursor: pointer; text-decoration:underline;}
+label[for=oss-toggle]:hover {color:red;}
+#oss-toggle { display: none;}
+#oss-toggle:not(:checked) ~ #oss { display: none; }
+#oss a:link, #oss a:visited {
+  color:black;
+  width:90px;
+  display:inline-block;
+  text-align:center;
+}
+#oss a span { display:block; }
 
 @media (max-width: 414px) {
   #agrosat {

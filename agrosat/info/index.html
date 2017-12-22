@@ -14,7 +14,7 @@
   <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64" href="../favicon.ico">
 
   <link rel="stylesheet" href="../css/normalize.css" />
-  <link rel="stylesheet" href="../css/info.css?v=5" />
+  <link rel="stylesheet" href="../css/info.css?v=6" />
 </head>
 
 <body lang="it">
@@ -70,36 +70,10 @@
       <div id="copernicus">
         <p><strong>Agrosat</strong> Contains modified Copernicus Sentinel data</p>
       </div>
-    </main>
 
-    <aside>
-      <h3>Termini e condizioni</h3>
-
-      <p>E' vietato l'uso commerciale dei prodotti forniti da Agrosat.</p>
-
-      <p>
-        Utilizzando Agrosat, i servizi forniti da Agrosat ed il contenuto di dati che rendiamo disponibile all'utente tramite i servizi di agricoltura di precisione, l'utente accetta di essere vincolato dai seguenti Termini di servizio e da eventuali modifiche future.
-      </p>
-
-      <p>
-        Tutti i contenuti di Agrosat sono soggetti alle leggi sulla proprietà intellettuale e protetti da copyright e da diritti d'autore. Non è consentito copiare, alterare, distribuire, pubblicare o utilizzare su altri siti per uso commerciale questi contenuti senza autorizzazione specifica di CNR-IBIMET. Il sito contiene dati coperti da diritto d'autore di terze parti**.
-      </p>
-
-      <p>
-        Le informazioni presenti sul Agrosat sono aggiornate e verificate periodicamente. Nonostante questo, potrebbero non essere prive di errori e potrebbero in ogni momento non risultare complete, precise o aggiornate. Agrosat declina ogni responsabilità riguardo alla completezza e all'aggiornamento di dati e informazioni forniti sul sito. Facciamo del nostro meglio e lo facciamo gratuitamente.
-      </p>
-
-      <p>
-        <a style="color:black" href="https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice">
-          * Sentinel Data Legal Notice
-        </a><br/>
-        ** Gli utenti Agrosat devono rispettare i termini e le condizioni dei dati utilizzati.
-      </p>
-    </aside>
-
-    <section id="oss">
-      <div>
-        <p>Nello sviluppo di Agrosat sono state usate le seguenti librerie e icone open source</p>
+      <p>Nello sviluppo di Agrosat sono state usate <label for="oss-toggle">librerie e icone open source</label></p>
+      <input id="oss-toggle" type="checkbox" />
+      <div id="oss">
         <p>
           <a href="https://github.com/jax-rs" target="_blank">
             <img src="../img/jaxrs.png" alt="Jaxrs">
@@ -132,7 +106,33 @@
           </a>
         </p>
       </div>
-    </section>
+
+    </main>
+
+    <aside>
+      <h3>Termini e condizioni</h3>
+
+      <p>E' vietato l'uso commerciale dei prodotti forniti da Agrosat.</p>
+
+      <p>
+        Utilizzando Agrosat, i servizi forniti da Agrosat ed il contenuto di dati che rendiamo disponibile all'utente tramite i servizi di agricoltura di precisione, l'utente accetta di essere vincolato dai seguenti Termini di servizio e da eventuali modifiche future.
+      </p>
+
+      <p>
+        Tutti i contenuti di Agrosat sono soggetti alle leggi sulla proprietà intellettuale e protetti da copyright e da diritti d'autore. Non è consentito copiare, alterare, distribuire, pubblicare o utilizzare su altri siti per uso commerciale questi contenuti senza autorizzazione specifica di CNR-IBIMET. Il sito contiene dati coperti da diritto d'autore di terze parti**.
+      </p>
+
+      <p>
+        Le informazioni presenti sul Agrosat sono aggiornate e verificate periodicamente. Nonostante questo, potrebbero non essere prive di errori e potrebbero in ogni momento non risultare complete, precise o aggiornate. Agrosat declina ogni responsabilità riguardo alla completezza e all'aggiornamento di dati e informazioni forniti sul sito. Facciamo del nostro meglio e lo facciamo gratuitamente.
+      </p>
+
+      <p>
+        <a style="color:black" href="https://sentinel.esa.int/documents/247904/690755/Sentinel_Data_Legal_Notice">
+          * Sentinel Data Legal Notice
+        </a><br/>
+        ** Gli utenti Agrosat devono rispettare i termini e le condizioni dei dati utilizzati.
+      </p>
+    </aside>
 
     <section id="logos">
         <img src="../img/cnr.png" alt="CNR Ibimet">

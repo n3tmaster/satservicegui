@@ -136,7 +136,7 @@ var vm = new Vue({
           console.log(error.response.headers);
         }
       });
-      this.loading = true;
+      this.loading = false;
     },
     modalStateForward: function(){
       var states = ['1. Disegna','2. Osserva','3. Decidi', '4. Agisci'];
