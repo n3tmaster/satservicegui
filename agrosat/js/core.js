@@ -347,7 +347,7 @@ var positions = new ol.geom.LineString([],
 
 var geolocation = new ol.Geolocation(/** @type {olx.GeolocationOptions} */ ({
   projection: _view.getProjection(),
-  trackingOptions: { maximumAge: 600000, enableHighAccuracy: true, timeout: 300 }
+  trackingOptions: { maximumAge: 600000, enableHighAccuracy: true, timeout: 100 }
 }));
 
 geolocation.on('change', function() {
