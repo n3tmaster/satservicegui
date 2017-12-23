@@ -1,6 +1,6 @@
-function calSetWhen(_y, _m, _d) {
-  vm.when = new Date(_y, _m, _d)
-}
+// function calSetWhen(_y, _m, _d) {
+//   vm.when = new Date(_y, _m, _d)
+// }
 function calendar(startDate, hotDates) {
   var m = startDate.getMonth(), y = startDate.getFullYear();
   var html ='';

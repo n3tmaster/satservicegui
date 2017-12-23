@@ -78,7 +78,10 @@ var vm = new Vue({
     }
   },
   watch: {
-    when: function() { this.overlayExtractedImage(); },
+    when: function() {
+      this.menuPick('naturalColor');
+      this.overlayExtractedImage();
+    },
     format: function() { this.overlayExtractedImage(); },
   },
   methods: {
@@ -143,9 +146,10 @@ var vm = new Vue({
       var i = states.indexOf(this.modalState);
       this.modalState = states[(i+1)%4]
     },
-    setWhen: function(aDate) {
-      this.when = aDate
-    },
+    // setWhen: function(aDate) {
+    //   this.menuPick('naturalColor')
+    //   this.when = aDate
+    // },
     whenHash: function() {
       var dSplit = this.when.split("-")
       return { year: +dSplit[0], month: +dSplit[1], day: +dSplit[2] }
